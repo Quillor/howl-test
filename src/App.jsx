@@ -1,6 +1,7 @@
 import Icon from './Icon.jsx'
 import PostCard from './PostCard.jsx'
-import { posts as samplePosts } from './posts.js'
+import { useEffect, useState } from 'react'
+import { getPosts } from './postStore.js'
 
 const navItems = [
   { label: 'Home', icon: 'home', current: true },
@@ -10,12 +11,28 @@ const navItems = [
   { label: 'Profile', icon: 'user' },
 ]
 
-// Layout preview only: add ?empty to the address to see the empty state.
-const showEmpty = new URLSearchParams(window.location.search).has('empty')
-
 function App() {
-  const posts = showEmpty ? [] : samplePosts
-  const spots = [...new Set(samplePosts.map((post) => post.location).filter(Boolean))].slice(0, 8)
+  const [posts, setPosts] = useState(null)
+  const [failed, setFailed] = useState(false)
+  const [attempt, setAttempt] = useState(0)
+
+  useEffect(() => {
+    let current = true
+    getPosts()
+      .then((loaded) => current && (setFailed(false), setPosts(loaded)))
+      .catch(() => current && setFailed(true))
+    return () => {
+      current = false
+    }
+  }, [attempt])
+
+  const retry = () => {
+    setFailed(false)
+    setPosts(null)
+    setAttempt(attempt + 1)
+  }
+
+  const spots = [...new Set((posts ?? []).map((post) => post.location).filter(Boolean))].slice(0, 8)
 
   return (
     <div className="app howl-surface">
@@ -41,7 +58,18 @@ function App() {
 
       <main className="feed">
         <h2 className="feed-title">Latest posts</h2>
-        {posts.length === 0 ? (
+        {failed ? (
+          <div className="howl-empty" role="alert">
+            <p>Couldn't load posts. Check your connection and try again.</p>
+            <button className="howl-button" onClick={retry}>
+              Try again
+            </button>
+          </div>
+        ) : posts === null ? (
+          <p className="howl-meta feed-status" role="status">
+            Loading posts…
+          </p>
+        ) : posts.length === 0 ? (
           <div className="howl-empty">
             <p>No posts yet. Be the first to post from campus.</p>
             <button className="howl-button">Write a post</button>
@@ -58,7 +86,7 @@ function App() {
       </main>
 
       <aside className="side" aria-label="Campus spots">
-        <h2 className="side-title">Spots</h2>
+        {spots.length > 0 && <h2 className="side-title">Spots</h2>}
         <div className="tag-row">
           {spots.map((spot) => (
             <button key={spot} className="howl-tag" aria-pressed="false">

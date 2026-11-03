@@ -4,7 +4,7 @@
 Howl is a social app where NC State students share short posts about campus life.
 Built with Vite + React (JavaScript). Run it with `npm run dev`.
 
-- `src/App.jsx` is the home screen, with `PostCard.jsx`, `Icon.jsx` and `App.css` beside it. `src/posts.js` holds the sample posts.
+- `src/App.jsx` is the home screen, with `PostCard.jsx`, `Icon.jsx` and `App.css` beside it. `src/posts.js` holds the sample posts, and `src/postStore.js` is the only place that loads or saves posts (swap it for a database later).
 - Styling comes from the design system in `src/design-system/` (tokens, components, tokens.json). Use its named tokens only: no raw colors or sizes in components. The page at `/design-system.html` shows everything.
 - The final design direction is `explorations/final-direction.md`.
 

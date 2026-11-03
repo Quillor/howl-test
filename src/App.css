@@ -231,3 +231,7 @@ body {
     --side-width: calc(var(--space-64) * 5);
   }
 }
+
+.feed-status {
+  margin: var(--space-16) 0;
+}

@@ -1,9 +1,13 @@
+import { useState } from 'react'
 import Icon from './Icon.jsx'
+import { isFresh, timeAgo } from './timeAgo.js'
 
-const isFresh = (time) => /^\d+[mh] ago$/.test(time)
 const isLong = (text) => text.length > 160
 
 function PostCard({ post }) {
+  const [expanded, setExpanded] = useState(false)
+  const long = isLong(post.text)
+
   return (
     <article className="howl-post is-card">
       <div className="howl-avatar" aria-hidden="true">
@@ -13,14 +17,21 @@ function PostCard({ post }) {
         <div className="howl-post-who">
           <strong>{post.author}</strong>
           {post.location && <span className="howl-meta">{post.location}</span>}
-          <span className={`howl-meta${isFresh(post.time) ? ' is-fresh' : ''}`}>{post.time}</span>
+          <span className={`howl-meta${isFresh(post.createdAt) ? ' is-fresh' : ''}`}>
+            {timeAgo(post.createdAt)}
+          </span>
         </div>
-        <p className={`howl-post-text${isLong(post.text) ? ' is-clamped' : ''}`}>{post.text}</p>
-        {isLong(post.text) && <button className="howl-more">Show more</button>}
+        <p className={`howl-post-text${long && !expanded ? ' is-clamped' : ''}`}>{post.text}</p>
+        {long && (
+          <button className="howl-more" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
+            {expanded ? 'Show less' : 'Show more'}
+          </button>
+        )}
         <div className="howl-post-actions">
           <button className="howl-pill" aria-pressed="false">
             <Icon name="howl" />
             Howl
+            <span className="howl-count">{post.howls}</span>
           </button>
           <button className="howl-icon-button" aria-label="Reply">
             <Icon name="reply" />
