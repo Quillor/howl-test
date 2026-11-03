@@ -103,7 +103,7 @@ const composer = (fieldClass, { value = '', disabled = false, left = '', postDis
   <div class="howl-composer">
     <div class="howl-avatar" aria-hidden="true">T</div>
     <div>
-      <textarea class="howl-composer-field ${fieldClass}" placeholder="What's happening at State?" aria-label="Write a post" ${disabled ? 'disabled' : ''}>${value}</textarea>
+      <textarea class="howl-composer-field ${fieldClass}" placeholder="What's happening on campus?" aria-label="Write a post" ${disabled ? 'disabled' : ''}>${value}</textarea>
       <div class="howl-composer-bar">
         <span class="howl-meta">${left}</span>
         <button class="howl-button" ${postDisabled ? 'disabled' : ''}>${label}</button>

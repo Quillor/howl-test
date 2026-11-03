@@ -18,7 +18,7 @@
   cursor: pointer;
 }
 
-.howl-surface :is(button, textarea):is(:focus-visible, .is-focus) {
+.howl-surface :is(button, textarea, select):is(:focus-visible, .is-focus) {
   outline: 3px solid var(--color-focus);
   outline-offset: 2px;
 }
@@ -237,6 +237,23 @@
   border-color: var(--color-border);
   color: var(--color-text-muted);
   cursor: not-allowed;
+}
+
+.howl-select {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--tap-target);
+  margin-top: var(--space-8);
+  padding: var(--space-8) var(--space-12);
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-soft);
+  background: none;
+  color: inherit;
+  font: inherit;
+}
+
+.howl-select:hover {
+  border-color: var(--color-text);
 }
 
 .howl-composer-bar {

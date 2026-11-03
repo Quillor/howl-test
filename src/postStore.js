@@ -15,7 +15,20 @@ const toPost = (sample, index = 0) => ({
   createdAt: new Date(started - sample.hoursAgo * HOUR - index * 1000).toISOString(),
 })
 
-let saved = samples.map((sample, index) => toPost(sample, index))
+export const MAX_LENGTH = 280
+export const campusSpots = [...new Set(samples.map((sample) => sample.location).filter(Boolean))]
+
+const STORAGE_KEY = 'howl.myPosts'
+
+const readMine = () => {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) ?? []
+  } catch {
+    return []
+  }
+}
+
+const sampleList = samples.map((sample, index) => toPost(sample, index))
 
 // Layout previews: ?empty shows no posts, ?many shows 60 posts, ?slow and ?fail test loading.
 const preview = new URLSearchParams(window.location.search)
@@ -36,18 +49,20 @@ export async function getPosts() {
   if (preview.has('fail')) throw new Error('Could not load posts')
   if (preview.has('empty')) return []
   if (preview.has('many')) return newestFirst(manyPosts())
-  return newestFirst(saved)
+  return newestFirst([...readMine(), ...sampleList])
 }
 
-export async function addPost({ author, location = null, text }) {
+export async function addPost({ author = 'you', location = null, text }) {
+  const clean = text.trim()
+  if (clean.length === 0 || clean.length > MAX_LENGTH) throw new Error('Invalid post')
   const post = {
-    id: `new-${Date.now()}`,
+    id: `mine-${Date.now()}`,
     author,
-    location,
-    text,
+    location: location || null,
+    text: clean,
     howls: 0,
     createdAt: new Date().toISOString(),
   }
-  saved = [post, ...saved]
+  localStorage.setItem(STORAGE_KEY, JSON.stringify([post, ...readMine()]))
   return post
 }

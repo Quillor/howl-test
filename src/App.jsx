@@ -1,4 +1,5 @@
 import Icon from './Icon.jsx'
+import Composer from './Composer.jsx'
 import PostCard from './PostCard.jsx'
 import { useEffect, useState } from 'react'
 import { getPosts } from './postStore.js'
@@ -15,6 +16,7 @@ function App() {
   const [posts, setPosts] = useState(null)
   const [failed, setFailed] = useState(false)
   const [attempt, setAttempt] = useState(0)
+  const [writing, setWriting] = useState(false)
 
   useEffect(() => {
     let current = true
@@ -32,6 +34,12 @@ function App() {
     setAttempt(attempt + 1)
   }
 
+  const posted = (post) => {
+    setPosts((current) => [post, ...(current ?? [])])
+    setWriting(false)
+    window.scrollTo({ top: 0 })
+  }
+
   const spots = [...new Set((posts ?? []).map((post) => post.location).filter(Boolean))].slice(0, 8)
 
   return (
@@ -42,14 +50,21 @@ function App() {
           <ul className="nav-list">
             {navItems.map((item) => (
               <li key={item.label} className={item.write ? 'nav-item-write' : undefined}>
-                <a
-                  className={`nav-link${item.write ? ' is-write' : ''}`}
-                  href="#"
-                  aria-current={item.current ? 'page' : undefined}
-                >
-                  <Icon name={item.icon} />
-                  {item.label}
-                </a>
+                {item.write ? (
+                  <button className="nav-link is-write" onClick={() => setWriting(true)}>
+                    <Icon name={item.icon} />
+                    {item.label}
+                  </button>
+                ) : (
+                  <a
+                    className="nav-link"
+                    href="#"
+                    aria-current={item.current ? 'page' : undefined}
+                  >
+                    <Icon name={item.icon} />
+                    {item.label}
+                  </a>
+                )}
               </li>
             ))}
           </ul>
@@ -72,7 +87,9 @@ function App() {
         ) : posts.length === 0 ? (
           <div className="howl-empty">
             <p>No posts yet. Be the first to post from campus.</p>
-            <button className="howl-button">Write a post</button>
+            <button className="howl-button" onClick={() => setWriting(true)}>
+              Write a post
+            </button>
           </div>
         ) : (
           <ol className="feed-list">
@@ -84,6 +101,8 @@ function App() {
           </ol>
         )}
       </main>
+
+      <Composer open={writing} onClose={() => setWriting(false)} onPosted={posted} />
 
       <aside className="side" aria-label="Campus spots">
         {spots.length > 0 && <h2 className="side-title">Spots</h2>}

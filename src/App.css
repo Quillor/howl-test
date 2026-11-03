@@ -68,6 +68,15 @@ body {
   text-decoration: none;
 }
 
+.nav-link {
+  box-sizing: border-box;
+  width: 100%;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
 .nav-link:hover {
   color: var(--color-text);
 }
@@ -234,4 +243,33 @@ body {
 
 .feed-status {
   margin: var(--space-16) 0;
+}
+
+.compose {
+  width: min(calc(100vw - var(--space-32)), calc(var(--space-64) * 8));
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-soft);
+}
+
+.compose::backdrop {
+  background: color-mix(in srgb, var(--color-background) 80%, transparent);
+}
+
+.compose .howl-composer {
+  border-bottom: 0;
+}
+
+.compose-message {
+  margin-top: var(--space-8);
+}
+
+.compose-actions {
+  display: flex;
+  gap: var(--space-8);
+}
+
+.compose-over {
+  color: var(--color-error);
+  font-weight: var(--weight-bold);
 }
