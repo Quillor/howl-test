@@ -2,7 +2,7 @@ import Icon from './Icon.jsx'
 import Composer from './Composer.jsx'
 import PostCard from './PostCard.jsx'
 import { useEffect, useState } from 'react'
-import { getPosts } from './postStore.js'
+import { getPosts, setHowled } from './postStore.js'
 
 const navItems = [
   { label: 'Home', icon: 'home', current: true },
@@ -38,6 +38,23 @@ function App() {
     setPosts((current) => [post, ...(current ?? [])])
     setWriting(false)
     window.scrollTo({ top: 0 })
+  }
+
+  const toggleHowl = async (id) => {
+    const target = posts.find((post) => post.id === id)
+    const next = !target.howled
+    const apply = (howled) =>
+      setPosts((current) =>
+        current.map((post) =>
+          post.id === id ? { ...post, howled, howls: post.howls + (howled ? 1 : -1) } : post,
+        ),
+      )
+    apply(next)
+    try {
+      await setHowled(id, next)
+    } catch {
+      apply(!next)
+    }
   }
 
   const spots = [...new Set((posts ?? []).map((post) => post.location).filter(Boolean))].slice(0, 8)
@@ -95,7 +112,7 @@ function App() {
           <ol className="feed-list">
             {posts.map((post) => (
               <li key={post.id}>
-                <PostCard post={post} />
+                <PostCard post={post} onHowl={toggleHowl} />
               </li>
             ))}
           </ol>

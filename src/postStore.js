@@ -28,6 +28,33 @@ const readMine = () => {
   }
 }
 
+const HOWLED_KEY = 'howl.howled'
+
+const readHowled = () => {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(HOWLED_KEY)) ?? [])
+  } catch {
+    return new Set()
+  }
+}
+
+// Each post keeps its own count; the howled ids belong to this person, so one howl per post.
+const withHowled = (list) => {
+  const howled = readHowled()
+  return list.map((post) => ({
+    ...post,
+    howled: howled.has(post.id),
+    howls: post.howls + (howled.has(post.id) ? 1 : 0),
+  }))
+}
+
+export async function setHowled(postId, howled) {
+  const ids = readHowled()
+  if (howled) ids.add(postId)
+  else ids.delete(postId)
+  localStorage.setItem(HOWLED_KEY, JSON.stringify([...ids]))
+}
+
 const sampleList = samples.map((sample, index) => toPost(sample, index))
 
 // Layout previews: ?empty shows no posts, ?many shows 60 posts, ?slow and ?fail test loading.
@@ -48,8 +75,8 @@ export async function getPosts() {
   if (preview.has('slow')) await wait(2500)
   if (preview.has('fail')) throw new Error('Could not load posts')
   if (preview.has('empty')) return []
-  if (preview.has('many')) return newestFirst(manyPosts())
-  return newestFirst([...readMine(), ...sampleList])
+  if (preview.has('many')) return withHowled(newestFirst(manyPosts()))
+  return withHowled(newestFirst([...readMine(), ...sampleList]))
 }
 
 export async function addPost({ author = 'you', location = null, text }) {
@@ -61,6 +88,7 @@ export async function addPost({ author = 'you', location = null, text }) {
     location: location || null,
     text: clean,
     howls: 0,
+    howled: false,
     createdAt: new Date().toISOString(),
   }
   localStorage.setItem(STORAGE_KEY, JSON.stringify([post, ...readMine()]))

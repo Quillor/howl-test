@@ -4,8 +4,9 @@ import { isFresh, timeAgo } from './timeAgo.js'
 
 const isLong = (text) => text.length > 160
 
-function PostCard({ post }) {
+function PostCard({ post, onHowl }) {
   const [expanded, setExpanded] = useState(false)
+  const [pop, setPop] = useState(false)
   const long = isLong(post.text)
 
   return (
@@ -28,9 +29,17 @@ function PostCard({ post }) {
           </button>
         )}
         <div className="howl-post-actions">
-          <button className="howl-pill" aria-pressed="false">
+          <button
+            className={`howl-pill${pop ? ' is-popping' : ''}`}
+            aria-pressed={post.howled}
+            onClick={() => {
+              setPop(!post.howled)
+              onHowl(post.id)
+            }}
+            onAnimationEnd={() => setPop(false)}
+          >
             <Icon name="howl" />
-            Howl
+            {post.howled ? 'Howled' : 'Howl'}
             <span className="howl-count">{post.howls}</span>
           </button>
           <button className="howl-icon-button" aria-label="Reply">

@@ -481,8 +481,19 @@
   color: var(--color-error);
 }
 
+@keyframes howl-pop {
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+.howl-pill.is-popping {
+  animation: howl-pop 200ms ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .howl-surface * {
+    animation: none !important;
     transition: none !important;
   }
 }
