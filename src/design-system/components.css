@@ -422,6 +422,11 @@
   align-items: baseline;
 }
 
+.howl-post-who strong {
+  font-size: var(--text-18);
+  font-weight: var(--weight-bold);
+}
+
 .howl-post-actions {
   display: flex;
   align-items: center;

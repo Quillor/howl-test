@@ -40,6 +40,7 @@ function App() {
       </div>
 
       <main className="feed">
+        <h2 className="feed-title">Latest posts</h2>
         {posts.length === 0 ? (
           <div className="howl-empty">
             <p>No posts yet. Be the first to post from campus.</p>
