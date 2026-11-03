@@ -368,6 +368,21 @@
   color: var(--color-text-muted);
 }
 
+/* Card version: separate boxes with space between them (the list sets the gap) */
+.howl-post.is-card {
+  border-bottom: 0;
+  border-radius: var(--radius-soft);
+  background: var(--color-surface);
+}
+
+.howl-post.is-card .howl-avatar {
+  background: var(--color-background);
+}
+
+.howl-post.is-card :is(.howl-pill, .howl-icon-button):is(:hover, .is-hover):not(:disabled) {
+  background: var(--color-background);
+}
+
 .howl-post-text.is-clamped {
   display: -webkit-box;
   -webkit-line-clamp: 4;
