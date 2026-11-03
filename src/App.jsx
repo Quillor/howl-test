@@ -57,11 +57,10 @@ function App() {
       </main>
 
       <aside className="side" aria-label="Campus spots">
-        <h2 className="side-title">Browse by spot</h2>
+        <h2 className="side-title">Spots</h2>
         <div className="tag-row">
           {spots.map((spot) => (
             <button key={spot} className="howl-tag" aria-pressed="false">
-              <Icon name="pin" />
               {spot}
             </button>
           ))}

@@ -5,15 +5,15 @@ const colorNames = [
   ['surface', 'Hover and fields'],
   ['border', 'Dividers'],
   ['border-strong', 'Field and button borders'],
-  ['text', 'Main text'],
-  ['text-muted', 'Muted text'],
-  ['accent', 'Accent'],
+  ['text', 'Posts and headings'],
+  ['text-muted', 'Handles, times and hints'],
+  ['accent', 'Buttons and Write'],
   ['on-accent', 'Text on accent'],
   ['accent-text', 'Fresh times'],
   ['focus', 'Focus ring'],
-  ['success', 'Success'],
-  ['warning', 'Warning'],
-  ['error', 'Error'],
+  ['success', 'Posted or saved'],
+  ['warning', 'Running low'],
+  ['error', 'Something failed'],
 ]
 
 const textStyles = [
@@ -50,8 +50,6 @@ const states = (items) =>
 const group = (title, body) =>
   `<div class="state-group"><p class="group-title">${title}</p>${body}</div>`
 
-const na = '<span class="howl-meta">Not used</span>'
-
 const buttons = () =>
   group(
     'Main',
@@ -59,7 +57,6 @@ const buttons = () =>
       ['Normal', '<button class="howl-button">Post</button>'],
       ['Hover', '<button class="howl-button is-hover">Post</button>'],
       ['Pressed', '<button class="howl-button is-pressed">Post</button>'],
-      ['Selected', na],
       ['Disabled', '<button class="howl-button" disabled>Post</button>'],
     ]),
   ) +
@@ -69,7 +66,6 @@ const buttons = () =>
       ['Normal', '<button class="howl-button is-secondary">Save draft</button>'],
       ['Hover', '<button class="howl-button is-secondary is-hover">Save draft</button>'],
       ['Pressed', '<button class="howl-button is-secondary is-pressed">Save draft</button>'],
-      ['Selected', na],
       ['Disabled', '<button class="howl-button is-secondary" disabled>Save draft</button>'],
     ]),
   ) +
@@ -99,7 +95,6 @@ const buttons = () =>
       ['Normal', `<button class="howl-icon-button" aria-label="Reply">${icons.reply}</button>`],
       ['Hover', `<button class="howl-icon-button is-hover" aria-label="Reply">${icons.reply}</button>`],
       ['Pressed', `<button class="howl-icon-button is-pressed" aria-label="Reply">${icons.reply}</button>`],
-      ['Selected', na],
       ['Disabled', `<button class="howl-icon-button" aria-label="Reply" disabled>${icons.reply}</button>`],
     ]),
   )
@@ -277,8 +272,8 @@ const buildMode = (theme) => {
 
     <h3>Notices</h3>
     <div class="notices">
-      <div class="howl-notice is-success">${icons.ok}<span><strong>Posted.</strong> Your post is live.</span></div>
-      <div class="howl-notice is-warning">${icons.warn}<span><strong>Almost full.</strong> 12 characters left.</span></div>
+      <div class="howl-notice is-success">${icons.ok}<span><strong>Posted.</strong></span></div>
+      <div class="howl-notice is-warning">${icons.warn}<span><strong>12 characters left.</strong></span></div>
       <div class="howl-notice is-error">${icons.error}<span><strong>Couldn't post.</strong> Check your connection and try again.</span></div>
     </div>
   `
