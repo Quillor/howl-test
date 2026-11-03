@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Howl · B Late shift</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --amber: #ffc21a;
+        --gray: #8a8a8a;
+        --line: #2b2b2b;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: #000; color: #f2f2f2; font: 400 16px/1.5 'Space Grotesk', sans-serif; }
+      button, input { font: inherit; color: inherit; }
+      button { cursor: pointer; }
+      .app { max-width: 480px; margin: 0 auto; min-height: 100vh; border-inline: 1px solid var(--line); }
+
+      .top { position: sticky; top: 0; background: #000; border-bottom: 1px solid var(--line); z-index: 1; }
+      .wordmark { margin: 0; padding: 16px 16px 0; font-weight: 700; font-size: 24px; line-height: 1.5; }
+      .tabs { display: flex; overflow-x: auto; scrollbar-width: none; padding: 0 8px; }
+      .tab { flex: none; min-height: 44px; padding: 0 16px; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--gray); }
+      .tab:hover { color: #fff; }
+      .tab[aria-pressed='true'] { color: #fff; font-weight: 700; border-bottom-color: #fff; }
+
+      .composer { display: grid; grid-template-columns: 32px 1fr auto; gap: 12px; align-items: center; padding: 16px; border-bottom: 1px solid var(--line); }
+      .composer input { min-height: 44px; border: 0; background: none; outline: 0; }
+      .composer input::placeholder { color: var(--gray); }
+      .composer:focus-within { border-bottom-color: #fff; }
+      .post-btn { min-height: 44px; padding: 0 24px; border: 0; border-radius: 22px; background: var(--amber); color: #000; font-weight: 700; }
+      .post-btn:hover:not(:disabled) { background: #fff; }
+      .post-btn:disabled { background: #1c1c1c; color: var(--gray); cursor: not-allowed; }
+
+      .post { display: grid; grid-template-columns: 32px 1fr; gap: 12px; padding: 16px; border-bottom: 1px solid var(--line); }
+      .avatar { width: 32px; height: 32px; border-radius: 50%; background: #1c1c1c; border: 1px solid var(--line); display: grid; place-items: center; font-size: 14px; font-weight: 700; }
+      .who { display: flex; flex-wrap: wrap; gap: 0 8px; align-items: baseline; }
+      .who strong { font-weight: 700; }
+      .meta { color: var(--gray); font-size: 14px; }
+      .meta.fresh { color: var(--amber); font-weight: 700; }
+      .text { margin: 4px 0 0; }
+      .text.clamp { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+      .more { min-height: 44px; padding: 0; border: 0; background: none; color: var(--gray); text-decoration: underline; text-underline-offset: 4px; }
+      .more:hover { color: #fff; }
+      .actions { display: flex; margin: 0 0 0 -12px; }
+      .act { width: 44px; height: 44px; border: 0; border-radius: 50%; background: none; color: var(--gray); display: grid; place-items: center; }
+      .act:hover { color: #fff; background: #1c1c1c; }
+      .act:active { transform: scale(0.92); }
+      .act[aria-pressed='true'] { color: var(--amber); }
+      .act[aria-pressed='true'] svg { fill: currentColor; }
+
+      button:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+      .post-btn:focus-visible { outline-color: var(--amber); }
+      @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <div class="top">
+        <h1 class="wordmark">Howl</h1>
+        <nav class="tabs" id="tabs" aria-label="Filter by place"></nav>
+      </div>
+      <form class="composer" id="composer">
+        <div class="avatar" aria-hidden="true">Y</div>
+        <input id="draft" type="text" placeholder="Write a post" aria-label="Write a post" autocomplete="off" />
+        <button class="post-btn" id="send" disabled>Post</button>
+      </form>
+      <main id="feed"></main>
+    </div>
+    <script type="module">
+      import { posts as sample, esc, shortPlace, spots, actions, moreButton, isLong, wire } from './shared.js'
+
+      const posts = [...sample]
+      const places = spots(3)
+      let filter = null
+      const fresh = (t) => /^(now|\d+[mh] ago)$/.test(t)
+
+      function render() {
+        document.getElementById('tabs').innerHTML =
+          `<button class="tab" data-spot="" aria-pressed="${filter === null}">Latest</button>` +
+          places
+            .map((p) => `<button class="tab" data-spot="${esc(p)}" aria-pressed="${filter === p}">${esc(shortPlace(p))}</button>`)
+            .join('')
+
+        document.getElementById('feed').innerHTML = posts
+          .filter((p) => filter === null || p.location === filter)
+          .map(
+            (p) => `
+            <article class="post">
+              <div class="avatar" aria-hidden="true">${esc(p.author[0].toUpperCase())}</div>
+              <div>
+                <div class="who">
+                  <strong>${esc(p.author)}</strong>
+                  <span class="meta">${p.location ? esc(p.location) + ' · ' : ''}</span>
+                  <span class="meta ${fresh(p.time) ? 'fresh' : ''}">${esc(p.time)}</span>
+                </div>
+                <p class="text ${isLong(p) ? 'clamp' : ''}">${esc(p.text)}</p>
+                ${moreButton(p)}
+                ${actions('icon')}
+              </div>
+            </article>`,
+          )
+          .join('')
+      }
+
+      const draft = document.getElementById('draft')
+      const send = document.getElementById('send')
+      draft.addEventListener('input', () => (send.disabled = draft.value.trim() === ''))
+      document.getElementById('composer').addEventListener('submit', (e) => {
+        e.preventDefault()
+        if (!draft.value.trim()) return
+        posts.unshift({ id: Date.now(), author: 'you', location: null, time: 'now', text: draft.value.trim() })
+        draft.value = ''
+        send.disabled = true
+        filter = null
+        render()
+      })
+      document.getElementById('tabs').addEventListener('click', (e) => {
+        const b = e.target.closest('[data-spot]')
+        if (!b) return
+        filter = b.dataset.spot || null
+        render()
+      })
+
+      wire()
+      render()
+    </script>
+  </body>
+</html>

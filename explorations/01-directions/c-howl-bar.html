@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Howl · C Howl bar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Figtree:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --navy: #10234a;
+        --coral: #ff6b3d;
+        --gray: #5a6577;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--navy); color: #fff; font: 400 16px/1.5 'Figtree', sans-serif; }
+      button { font: inherit; color: inherit; cursor: pointer; }
+      .app { max-width: 480px; margin: 0 auto; min-height: 100vh; }
+
+      header { display: flex; align-items: center; justify-content: space-between; padding: 16px; }
+      .wordmark { margin: 0; font: 900 40px/1 'Fraunces', serif; }
+      .write { min-height: 44px; padding: 0 24px; border: 0; border-radius: 22px; background: #fff; color: var(--navy); font-weight: 700; }
+      .write:hover { background: var(--coral); }
+      .write:active { transform: scale(0.96); }
+
+      .tabs { position: sticky; top: 0; z-index: 1; display: flex; overflow-x: auto; scrollbar-width: none; padding: 0 8px; background: var(--navy); }
+      .tab { flex: none; min-height: 44px; padding: 0 16px; border: 0; border-bottom: 2px solid transparent; background: none; color: #c5cde0; }
+      .tab:hover { color: #fff; }
+      .tab[aria-pressed='true'] { color: #fff; font-weight: 700; border-bottom-color: var(--coral); }
+
+      .feed { display: grid; gap: 16px; padding: 16px 16px 32px; }
+      .card { background: #fff; color: var(--navy); border-radius: 4px; overflow: hidden; }
+      .body { padding: 16px 16px 0; }
+      .head { display: flex; align-items: center; gap: 12px; }
+      .avatar { flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--navy); color: #fff; display: grid; place-items: center; font-size: 14px; font-weight: 700; }
+      .who { flex: 1; min-width: 0; line-height: 1.25; }
+      .who strong { display: block; font: 700 16px/1.25 'Fraunces', serif; }
+      .who span { font-size: 14px; color: var(--gray); }
+      .follow { flex: none; min-height: 44px; padding: 0 16px; border: 2px solid var(--navy); border-radius: 22px; background: none; font-size: 14px; font-weight: 700; }
+      .follow:hover { background: #e8ecf5; }
+      .follow[aria-pressed='true'] { background: var(--navy); color: #fff; }
+      .text { margin: 12px 0 0; }
+      .text.clamp { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+      .more { min-height: 44px; padding: 0; border: 0; background: none; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+      .foot { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 8px; }
+      .time { font-size: 14px; color: var(--gray); }
+      .actions { display: flex; margin-right: -8px; }
+      .act { width: 44px; height: 44px; border: 0; border-radius: 50%; background: none; color: var(--navy); display: grid; place-items: center; }
+      .act:hover { background: #e8ecf5; }
+      .act:active { transform: scale(0.92); }
+
+      .howl { width: 100%; min-height: 48px; border: 0; background: var(--coral); color: var(--navy); font-weight: 700; display: flex; align-items: center; justify-content: center; }
+      .howl:hover { background: #ff855d; }
+      .howl:active { background: #e85a2c; }
+      .howl[aria-pressed='true'] { background: var(--navy); color: #fff; }
+
+      button:focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; }
+      .card button:focus-visible { outline-color: var(--navy); }
+      .howl:focus-visible { outline-offset: -3px; }
+      @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header>
+        <h1 class="wordmark">Howl</h1>
+        <button class="write">Write</button>
+      </header>
+      <nav class="tabs" id="tabs" aria-label="Filter by place"></nav>
+      <main class="feed" id="feed"></main>
+    </div>
+    <script type="module">
+      import { posts, esc, icons, shortPlace, spots, barButton, moreButton, isLong, wire } from './shared.js'
+
+      const places = spots(3)
+      let filter = null
+
+      function render() {
+        document.getElementById('tabs').innerHTML =
+          `<button class="tab" data-spot="" aria-pressed="${filter === null}">All</button>` +
+          places
+            .map((p) => `<button class="tab" data-spot="${esc(p)}" aria-pressed="${filter === p}">${esc(shortPlace(p))}</button>`)
+            .join('')
+
+        document.getElementById('feed').innerHTML = posts
+          .filter((p) => filter === null || p.location === filter)
+          .map(
+            (p) => `
+            <article class="card">
+              <div class="body">
+                <div class="head">
+                  <div class="avatar" aria-hidden="true">${esc(p.author[0].toUpperCase())}</div>
+                  <div class="who"><strong>${esc(p.author)}</strong>${p.location ? `<span>${esc(p.location)}</span>` : ''}</div>
+                  <button class="follow" data-follow aria-pressed="false">Follow</button>
+                </div>
+                <p class="text ${isLong(p) ? 'clamp' : ''}">${esc(p.text)}</p>
+                ${moreButton(p)}
+                <div class="foot">
+                  <span class="time">${esc(p.time)}</span>
+                  <div class="actions">
+                    <button class="act" aria-label="Reply">${icons.reply}</button>
+                    <button class="act" aria-label="Share">${icons.share}</button>
+                  </div>
+                </div>
+              </div>
+              ${barButton()}
+            </article>`,
+          )
+          .join('')
+      }
+
+      document.getElementById('tabs').addEventListener('click', (e) => {
+        const b = e.target.closest('[data-spot]')
+        if (!b) return
+        filter = b.dataset.spot || null
+        render()
+      })
+      document.addEventListener('click', (e) => {
+        const f = e.target.closest('[data-follow]')
+        if (!f) return
+        const on = f.getAttribute('aria-pressed') !== 'true'
+        f.setAttribute('aria-pressed', String(on))
+        f.textContent = on ? 'Following' : 'Follow'
+      })
+
+      wire()
+      render()
+    </script>
+  </body>
+</html>

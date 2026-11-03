@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Howl · A Loud</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&family=Archivo+Black&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --red: #cc0000;
+        --paper: #fff8f0;
+        --ink: #1a1210;
+        --gray: #6b5f57;
+        --line: #e7dccf;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--paper); color: var(--ink); font: 400 16px/1.5 'Archivo', sans-serif; }
+      button { font: inherit; color: inherit; cursor: pointer; }
+      .app { max-width: 480px; margin: 0 auto; min-height: 100vh; }
+
+      header { display: flex; align-items: flex-start; justify-content: space-between; padding: 16px 16px 0; }
+      .wordmark { margin: 0; font: 400 64px/1 'Archivo Black', sans-serif; letter-spacing: -0.03em; color: var(--red); }
+      .write { min-height: 44px; padding: 0 24px; border: 0; border-radius: 22px; background: var(--red); color: #fff; font-weight: 700; }
+      .write:hover { background: var(--ink); }
+      .write:active { transform: scale(0.96); }
+
+      .spots { display: flex; gap: 8px; padding: 16px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--line); }
+      .spot { flex: none; width: 72px; min-height: 44px; padding: 0; border: 0; background: none; display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 14px; }
+      .ring { width: 56px; height: 56px; border-radius: 50%; border: 3px solid var(--red); display: grid; place-items: center; font: 400 16px/1 'Archivo Black', sans-serif; color: var(--red); transition: background 0.15s, color 0.15s; }
+      .spot:hover .ring { background: #ffe9e3; }
+      .spot[aria-pressed='true'] .ring { background: var(--red); color: #fff; }
+      .spot[aria-pressed='true'] .name { font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+      .name { max-width: 72px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+      .post { padding: 16px; border-bottom: 1px solid var(--line); }
+      .head { display: flex; align-items: center; gap: 12px; }
+      .avatar { flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: var(--paper); display: grid; place-items: center; font: 400 14px/1 'Archivo Black', sans-serif; }
+      .who { min-width: 0; line-height: 1.25; }
+      .who strong { font: 400 16px/1.25 'Archivo Black', sans-serif; }
+      .who span { display: block; font-size: 14px; color: var(--gray); }
+      .text { margin: 12px 0 0; }
+      .text.clamp { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+      .more { min-height: 44px; padding: 0; border: 0; background: none; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+      .actions { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+      .howl { min-height: 44px; padding: 0 16px 0 12px; display: inline-flex; align-items: center; gap: 8px; border: 2px solid var(--red); border-radius: 22px; background: none; color: var(--red); font-weight: 700; }
+      .howl:hover { background: #ffe9e3; }
+      .howl:active { transform: scale(0.96); }
+      .howl[aria-pressed='true'] { background: var(--red); color: #fff; }
+      .howl[aria-pressed='true'] svg { fill: currentColor; }
+      .act { width: 44px; height: 44px; border: 0; border-radius: 50%; background: none; display: grid; place-items: center; }
+      .act:hover { background: var(--line); }
+      .act:active { transform: scale(0.92); }
+
+      button:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+      @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header>
+        <h1 class="wordmark">Howl</h1>
+        <button class="write">Write</button>
+      </header>
+      <nav class="spots" id="spots" aria-label="Filter by place"></nav>
+      <main id="feed"></main>
+    </div>
+    <script type="module">
+      import { posts, esc, shortPlace, spots, actions, moreButton, isLong, wire } from './shared.js'
+
+      const places = spots(8)
+      let filter = null
+
+      function render() {
+        document.getElementById('spots').innerHTML =
+          `<button class="spot" data-spot="" aria-pressed="${filter === null}"><span class="ring">All</span><span class="name">Everyone</span></button>` +
+          places
+            .map(
+              (p) =>
+                `<button class="spot" data-spot="${esc(p)}" aria-pressed="${filter === p}"><span class="ring">${esc(shortPlace(p)[0])}</span><span class="name">${esc(shortPlace(p))}</span></button>`,
+            )
+            .join('')
+
+        document.getElementById('feed').innerHTML = posts
+          .filter((p) => filter === null || p.location === filter)
+          .map(
+            (p) => `
+            <article class="post">
+              <div class="head">
+                <div class="avatar" aria-hidden="true">${esc(p.author[0].toUpperCase())}</div>
+                <div class="who"><strong>${esc(p.author)}</strong><span>${p.location ? esc(p.location) + ' · ' : ''}${esc(p.time)}</span></div>
+              </div>
+              <p class="text ${isLong(p) ? 'clamp' : ''}">${esc(p.text)}</p>
+              ${moreButton(p)}
+              ${actions('word')}
+            </article>`,
+          )
+          .join('')
+      }
+
+      document.getElementById('spots').addEventListener('click', (e) => {
+        const b = e.target.closest('[data-spot]')
+        if (!b) return
+        filter = b.dataset.spot || null
+        render()
+      })
+
+      wire()
+      render()
+    </script>
+  </body>
+</html>

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Howl · 02 Amber pill</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="base.css" />
+    <style>
+      :root { --text-size: 18px; --howl-color: var(--amber); --howl-border: var(--amber); }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <div class="top">
+        <h1 class="wordmark">Howl</h1>
+        <nav class="tabs" id="tabs" aria-label="Filter by place"></nav>
+      </div>
+      <form class="composer" id="composer">
+        <div class="avatar" aria-hidden="true">Y</div>
+        <input id="draft" type="text" placeholder="Write a post" aria-label="Write a post" autocomplete="off" />
+        <button class="post-btn" id="send" disabled>Post</button>
+      </form>
+      <main id="feed"></main>
+    </div>
+    <script type="module">
+      import { mount } from './app.js'
+      mount()
+    </script>
+  </body>
+</html>
