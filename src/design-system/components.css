@@ -1,0 +1,450 @@
+/* Howl base components. Only named tokens from tokens.css, no raw colors or sizes. */
+
+.howl-surface {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: var(--text-16);
+  line-height: var(--line-height);
+}
+
+.howl-surface button,
+.howl-surface textarea {
+  font: inherit;
+  color: inherit;
+}
+
+.howl-surface button {
+  cursor: pointer;
+}
+
+.howl-surface :is(button, textarea):is(:focus-visible, .is-focus) {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.howl-wordmark {
+  margin: 0;
+  font-size: var(--text-24);
+  font-weight: var(--weight-bold);
+  line-height: var(--line-height);
+}
+
+.howl-meta {
+  color: var(--color-text-muted);
+  font-size: var(--text-14);
+}
+
+.howl-meta.is-fresh {
+  color: var(--color-accent-text);
+  font-weight: var(--weight-bold);
+}
+
+.howl-post-text {
+  margin: var(--space-4) 0 0;
+  font-size: var(--text-18);
+  line-height: var(--line-height);
+}
+
+/* Tabs */
+.howl-tab {
+  min-height: var(--tap-target);
+  padding: 0 var(--space-16);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--color-text-muted);
+}
+
+.howl-tab:is(:hover, .is-hover) {
+  color: var(--color-text);
+}
+
+.howl-tab[aria-pressed='true'] {
+  color: var(--color-text);
+  font-weight: var(--weight-bold);
+  border-bottom-color: var(--color-text);
+}
+
+/* Buttons: main (amber), secondary (outline). Secondary can be a toggle. */
+.howl-button {
+  min-height: var(--tap-target);
+  padding: 0 var(--space-24);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  border: 2px solid transparent;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-weight: var(--weight-bold);
+}
+
+.howl-button:is(:hover, .is-hover):not(:disabled) {
+  background: var(--color-text);
+  color: var(--color-background);
+}
+
+.howl-button:is(:active, .is-pressed):not(:disabled) {
+  background: var(--color-text);
+  color: var(--color-background);
+  transform: scale(0.96);
+}
+
+.howl-button:disabled {
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.howl-button.is-secondary {
+  border-color: var(--color-border-strong);
+  background: none;
+  color: var(--color-text);
+}
+
+.howl-button.is-secondary:is(:hover, .is-hover):not(:disabled) {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.howl-button.is-secondary:is(:active, .is-pressed):not(:disabled) {
+  background: var(--color-surface);
+  border-color: var(--color-text);
+  color: var(--color-text);
+}
+
+.howl-button.is-secondary[aria-pressed='true'] {
+  background: var(--color-text);
+  border-color: var(--color-text);
+  color: var(--color-background);
+}
+
+.howl-button.is-secondary:disabled {
+  border-color: var(--color-border);
+  background: none;
+  color: var(--color-text-muted);
+}
+
+/* Howl reaction */
+.howl-pill {
+  min-height: var(--tap-target);
+  padding: 0 var(--space-16) 0 var(--space-12);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--color-text-muted);
+  font-weight: var(--weight-bold);
+}
+
+.howl-pill:is(:hover, .is-hover) {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.howl-pill:is(:active, .is-pressed) {
+  transform: scale(0.96);
+}
+
+.howl-pill[aria-pressed='true'] {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.howl-pill[aria-pressed='true'] svg {
+  fill: currentColor;
+}
+
+.howl-pill:disabled {
+  border-color: var(--color-border);
+  background: none;
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* An edge keeps amber visible on white (3:1); invisible on black */
+.howl-button:not(.is-secondary):not(:disabled),
+.howl-pill[aria-pressed='true'] {
+  box-shadow: 0 0 0 2px var(--color-on-accent);
+}
+
+/* Reply and share */
+.howl-icon-button {
+  width: var(--tap-target);
+  height: var(--tap-target);
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--color-text-muted);
+}
+
+.howl-icon-button:is(:hover, .is-hover) {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.howl-icon-button:is(:active, .is-pressed) {
+  transform: scale(0.92);
+}
+
+.howl-icon-button:disabled {
+  background: none;
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Write a post box */
+.howl-composer {
+  display: grid;
+  grid-template-columns: var(--space-32) 1fr;
+  gap: var(--space-12);
+  padding: var(--space-16);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.howl-composer-field {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: calc(var(--space-64) + var(--space-32));
+  padding: var(--space-12);
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-soft);
+  background: none;
+  line-height: var(--line-height);
+  resize: none;
+}
+
+.howl-composer-field::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+.howl-composer-field:is(:hover, .is-hover):not(:disabled) {
+  border-color: var(--color-text);
+}
+
+.howl-composer-field:disabled {
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.howl-composer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-12);
+  margin-top: var(--space-8);
+}
+
+/* Profile picture. The button wraps it so the tap target stays 44px. */
+.howl-avatar {
+  width: var(--space-32);
+  height: var(--space-32);
+  display: grid;
+  place-items: center;
+  flex: none;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-surface);
+  font-size: var(--text-14);
+  font-weight: var(--weight-bold);
+}
+
+.howl-avatar.is-large {
+  width: var(--space-48);
+  height: var(--space-48);
+  font-size: var(--text-18);
+}
+
+.howl-avatar-button {
+  min-width: var(--tap-target);
+  min-height: var(--tap-target);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+}
+
+.howl-avatar-button:is(:hover, .is-hover):not(:disabled) .howl-avatar {
+  border-color: var(--color-text);
+}
+
+.howl-avatar-button:is(:active, .is-pressed):not(:disabled) .howl-avatar {
+  border-color: var(--color-text);
+  transform: scale(0.92);
+}
+
+.howl-avatar-button[aria-pressed='true'] .howl-avatar {
+  border-color: var(--color-text);
+  box-shadow:
+    0 0 0 2px var(--color-background),
+    0 0 0 4px var(--color-text);
+}
+
+.howl-avatar-button:disabled {
+  cursor: not-allowed;
+}
+
+.howl-avatar-button:disabled .howl-avatar {
+  background: none;
+  color: var(--color-text-muted);
+}
+
+/* Campus spot tag */
+.howl-tag {
+  min-height: var(--tap-target);
+  padding: 0 var(--space-16) 0 var(--space-12);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--color-text-muted);
+  font-size: var(--text-14);
+}
+
+.howl-tag:is(:hover, .is-hover):not(:disabled) {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.howl-tag:is(:active, .is-pressed):not(:disabled) {
+  background: var(--color-surface);
+  border-color: var(--color-text);
+  color: var(--color-text);
+  transform: scale(0.96);
+}
+
+.howl-tag[aria-pressed='true'] {
+  background: var(--color-text);
+  border-color: var(--color-text);
+  color: var(--color-background);
+  font-weight: var(--weight-bold);
+}
+
+.howl-tag:disabled {
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+/* Post card: no box, a divider underneath */
+.howl-post {
+  display: grid;
+  grid-template-columns: var(--space-32) 1fr;
+  gap: var(--space-12);
+  padding: var(--space-16);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.howl-post:is(:hover, .is-hover) {
+  background: var(--color-surface);
+}
+
+.howl-post.is-pressed {
+  background: var(--color-surface);
+  box-shadow: inset 0 0 0 2px var(--color-border-strong);
+}
+
+.howl-post.is-selected {
+  background: var(--color-surface);
+  box-shadow: inset 4px 0 0 var(--color-text);
+}
+
+.howl-post.is-disabled {
+  color: var(--color-text-muted);
+}
+
+.howl-post-text.is-clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.howl-more {
+  min-height: var(--tap-target);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  text-underline-offset: var(--space-4);
+}
+
+.howl-more:is(:hover, .is-hover) {
+  color: var(--color-text);
+}
+
+.howl-empty {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-12);
+  padding: var(--space-24) var(--space-16);
+}
+
+.howl-empty p {
+  margin: 0;
+}
+
+.howl-post-who {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-8);
+  align-items: baseline;
+}
+
+.howl-post-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin-top: var(--space-8);
+}
+
+/* Notice: icon and words carry the meaning, color supports it */
+.howl-notice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-soft);
+  background: var(--color-surface);
+}
+
+.howl-notice svg {
+  flex: none;
+}
+
+.howl-notice.is-success svg,
+.howl-notice.is-success strong {
+  color: var(--color-success);
+}
+
+.howl-notice.is-warning svg,
+.howl-notice.is-warning strong {
+  color: var(--color-warning);
+}
+
+.howl-notice.is-error svg,
+.howl-notice.is-error strong {
+  color: var(--color-error);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .howl-surface * {
+    transition: none !important;
+  }
+}

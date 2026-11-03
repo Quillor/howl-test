@@ -1,0 +1,95 @@
+/* Howl design tokens. Source: explorations/final-direction.md (round 02, version B).
+   Dark mode is the direction exactly as written. Light mode swaps only the named values. */
+
+:root {
+  /* Raw values */
+  --gray-0: #ffffff;
+  --gray-50: #f2f2f2;
+  --gray-200: #d4d4d4;
+  --gray-400: #8a8a8a;
+  --gray-600: #5c5c5c;
+  --gray-800: #2b2b2b;
+  --gray-850: #1c1c1c;
+  --gray-900: #0a0a0a;
+  --gray-1000: #000000;
+  --amber-500: #ffc21a;
+  --amber-700: #7a5200;
+  --green-400: #4ade80;
+  --green-700: #17703a;
+  --red-400: #ff6b6b;
+  --red-700: #b3261e;
+
+  --font-family: 'Space Grotesk', sans-serif;
+  --weight-regular: 400;
+  --weight-bold: 700;
+
+  --text-14: 14px;
+  --text-16: 16px;
+  --text-18: 18px;
+  --text-24: 24px;
+  --line-height: 1.5;
+
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-48: 48px;
+  --space-64: 64px;
+
+  --radius-soft: 12px;
+  --radius-pill: 999px;
+
+  --tap-target: 44px;
+  --feed-width: 480px;
+}
+
+/* Names, light mode */
+:root,
+[data-theme='light'] {
+  --color-background: var(--gray-0);
+  --color-surface: var(--gray-50);
+  --color-border: var(--gray-200);
+  --color-border-strong: var(--gray-400);
+  --color-text: var(--gray-900);
+  --color-text-muted: var(--gray-600);
+  --color-accent: var(--amber-500);
+  --color-on-accent: var(--gray-1000);
+  --color-accent-text: var(--amber-700);
+  --color-focus: var(--gray-1000);
+  --color-success: var(--green-700);
+  --color-warning: var(--amber-700);
+  --color-error: var(--red-700);
+}
+
+/* Names, dark mode: follows the system unless data-theme says otherwise */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-background: var(--gray-1000);
+    --color-surface: var(--gray-850);
+    --color-border: var(--gray-800);
+    --color-border-strong: var(--gray-400);
+    --color-text: var(--gray-50);
+    --color-text-muted: var(--gray-400);
+    --color-accent-text: var(--amber-500);
+    --color-focus: var(--gray-0);
+    --color-success: var(--green-400);
+    --color-warning: var(--amber-500);
+    --color-error: var(--red-400);
+  }
+}
+
+[data-theme='dark'] {
+  --color-background: var(--gray-1000);
+  --color-surface: var(--gray-850);
+  --color-border: var(--gray-800);
+  --color-border-strong: var(--gray-400);
+  --color-text: var(--gray-50);
+  --color-text-muted: var(--gray-400);
+  --color-accent-text: var(--amber-500);
+  --color-focus: var(--gray-0);
+  --color-success: var(--green-400);
+  --color-warning: var(--amber-500);
+  --color-error: var(--red-400);
+}
