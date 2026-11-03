@@ -18,7 +18,7 @@ function Composer({ open, initialSpot, onClose, onPosted }) {
       el.showModal()
     }
     if (!open && el.open) el.close()
-  }, [open])
+  }, [open, initialSpot])
 
   const left = MAX_LENGTH - text.length
   const empty = text.trim().length === 0

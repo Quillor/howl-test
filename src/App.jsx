@@ -3,13 +3,13 @@ import Composer from './Composer.jsx'
 import PostCard from './PostCard.jsx'
 import SpotTags from './SpotTags.jsx'
 import { useEffect, useState } from 'react'
-import { campusSpots, getPosts, setHowled } from './postStore.js'
+import { campusSpots, getPosts, reportPost, setHowled } from './postStore.js'
 
 const navItems = [
   { label: 'Home', icon: 'home', current: true },
   { label: 'Spots', icon: 'pin' },
   { label: 'Write', icon: 'write', write: true },
-  { label: 'Activity', icon: 'bell' },
+  { label: 'Alerts', icon: 'bell' },
   { label: 'Profile', icon: 'user' },
 ]
 
@@ -58,6 +58,14 @@ function App() {
     } catch {
       apply(!next)
     }
+  }
+
+  const report = async (id) => {
+    setPosts((current) =>
+      current.map((post) => (post.id === id ? { ...post, reported: true, reports: post.reports + 1 } : post)),
+    )
+    const { hidden } = await reportPost(id)
+    if (hidden) setPosts((current) => current.filter((post) => post.id !== id))
   }
 
   const shown = spot ? (posts ?? []).filter((post) => post.location === spot) : posts
@@ -118,7 +126,7 @@ function App() {
           <ol className="feed-list">
             {shown.map((post) => (
               <li key={post.id}>
-                <PostCard post={post} onHowl={toggleHowl} />
+                <PostCard post={post} onHowl={toggleHowl} onReport={report} />
               </li>
             ))}
           </ol>

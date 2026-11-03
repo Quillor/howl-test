@@ -289,3 +289,20 @@ body {
   color: var(--color-error);
   font-weight: var(--weight-bold);
 }
+
+.howl-post .howl-notice {
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: var(--space-8);
+  border: 2px solid var(--color-border);
+  background: var(--color-background);
+}
+
+.howl-post .howl-notice p {
+  margin: 0;
+}
+
+.howl-post .howl-notice .howl-post-actions {
+  flex-wrap: wrap;
+  margin-top: 0;
+}

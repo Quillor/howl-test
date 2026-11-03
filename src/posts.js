@@ -7,7 +7,7 @@ export const posts = [
   { id: 6, author: 'devon_b', location: 'D. H. Hill Jr. Library', hoursAgo: 24, howls: 6, text: 'Does anyone know if the Hill Library 24-hour floors are open during finals week? Asking for my sleep schedule.' },
   { id: 7, author: 'sam_the_engineer', location: 'Engineering Building II', hoursAgo: 48, howls: 18, text: 'Lab partner needed for ECE 306. I bring snacks and a working soldering iron.' },
   { id: 8, author: 'aaliyah_m', location: 'Lake Raleigh', hoursAgo: 48, howls: 40, text: 'Sunset at Lake Raleigh tonight was unreal. Highly recommend a walk after your last class.' },
-  { id: 9, author: 'chris.p', location: 'Fountain Dining Hall', hoursAgo: 48, howls: 22, text: 'Fountain has the good chicken tenders today. Spread the word, tell your friends.' },
+  { id: 9, author: 'chris.p', location: 'Fountain Dining Hall', hoursAgo: 48, howls: 22, reports: 2, text: 'Fountain has the good chicken tenders today. Spread the word, tell your friends.' },
   { id: 10, author: 'tori_w', location: 'Wolf Plaza', hoursAgo: 72, howls: 3, text: 'Lost: a blue Hydro Flask with a Wolfpack sticker. Last seen near Wolf Plaza. Please message me if you find it!' },
   { id: 11, author: 'nate_g', location: 'Reynolds Coliseum', hoursAgo: 72, howls: 12, text: 'Basketball practice open to students tonight at Reynolds. The energy in there is unmatched.' },
   { id: 12, author: 'hannah_l', location: 'Bell Tower', hoursAgo: 96, howls: 0, text: 'Tradition check: I finally walked under the Belltower and I am supposed to avoid graduating late now, right?' },

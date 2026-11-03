@@ -4,9 +4,10 @@ import { isFresh, timeAgo } from './timeAgo.js'
 
 const isLong = (text) => text.length > 160
 
-function PostCard({ post, onHowl }) {
+function PostCard({ post, onHowl, onReport }) {
   const [expanded, setExpanded] = useState(false)
   const [pop, setPop] = useState(false)
+  const [asking, setAsking] = useState(false)
   const long = isLong(post.text)
 
   return (
@@ -48,7 +49,32 @@ function PostCard({ post, onHowl }) {
           <button className="howl-icon-button" aria-label="Share">
             <Icon name="share" />
           </button>
+          {post.author !== 'you' && !post.reported && (
+            <button className="howl-more is-report" aria-expanded={asking} onClick={() => setAsking(!asking)}>
+              Report
+            </button>
+          )}
+          {post.reported && <span className="howl-meta">Reported</span>}
         </div>
+        {asking && !post.reported && (
+          <div className="howl-notice is-warning" role="group" aria-label="Report this post">
+            <p>Report this post? We hide posts after 3 reports.</p>
+            <div className="howl-post-actions">
+              <button
+                className="howl-button"
+                onClick={() => {
+                  setAsking(false)
+                  onReport(post.id)
+                }}
+              >
+                Report post
+              </button>
+              <button className="howl-button is-secondary" onClick={() => setAsking(false)}>
+                Keep it
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </article>
   )

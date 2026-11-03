@@ -12,6 +12,7 @@ const toPost = (sample, index = 0) => ({
   location: sample.location,
   text: sample.text,
   howls: sample.howls,
+  reports: sample.reports ?? 0,
   createdAt: new Date(started - sample.hoursAgo * HOUR - index * 1000).toISOString(),
 })
 
@@ -60,6 +61,36 @@ export async function setHowled(postId, howled) {
   localStorage.setItem(HOWLED_KEY, JSON.stringify([...ids]))
 }
 
+const REPORTED_KEY = 'howl.reported'
+export const REPORT_LIMIT = 3
+
+const readReported = () => {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(REPORTED_KEY)) ?? [])
+  } catch {
+    return new Set()
+  }
+}
+
+// A post is hidden once it has 3 reports. This person can report a post only once.
+const withReports = (list) => {
+  const reported = readReported()
+  return list
+    .map((post) => ({
+      ...post,
+      reported: reported.has(post.id),
+      reports: (post.reports ?? 0) + (reported.has(post.id) ? 1 : 0),
+    }))
+    .filter((post) => post.reports < REPORT_LIMIT)
+}
+
+export async function reportPost(postId) {
+  const ids = readReported()
+  ids.add(postId)
+  localStorage.setItem(REPORTED_KEY, JSON.stringify([...ids]))
+  return { hidden: withReports(sampleList.concat(readMine())).every((post) => post.id !== postId) }
+}
+
 const sampleList = samples.map((sample, index) => toPost(sample, index))
 
 // Layout previews: ?empty shows no posts, ?many shows 60 posts, ?slow and ?fail test loading.
@@ -80,8 +111,8 @@ export async function getPosts() {
   if (preview.has('slow')) await wait(2500)
   if (preview.has('fail')) throw new Error('Could not load posts')
   if (preview.has('empty')) return []
-  if (preview.has('many')) return withHowled(newestFirst(manyPosts()))
-  return withHowled(newestFirst([...readMine(), ...sampleList]))
+  if (preview.has('many')) return withHowled(withReports(newestFirst(manyPosts())))
+  return withHowled(withReports(newestFirst([...readMine(), ...sampleList])))
 }
 
 export async function addPost({ author = 'you', location = null, text }) {
@@ -94,6 +125,7 @@ export async function addPost({ author = 'you', location = null, text }) {
     text: clean,
     howls: 0,
     howled: false,
+    reports: 0,
     createdAt: new Date().toISOString(),
   }
   localStorage.setItem(STORAGE_KEY, JSON.stringify([post, ...readMine()]))
