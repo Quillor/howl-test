@@ -1,14 +1,35 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Icon from './Icon.jsx'
 import { isFresh, timeAgo } from './timeAgo.js'
 
 const isLong = (text) => text.length > 160
 
-function PostCard({ post, onHowl, onReport }) {
+// `mine` posts get Delete in the "…" menu; everyone else's get Report.
+function PostCard({ post, mine, onHowl, onReport, onDelete }) {
   const [expanded, setExpanded] = useState(false)
   const [pop, setPop] = useState(false)
-  const [asking, setAsking] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [asking, setAsking] = useState(null)
+  const menu = useRef(null)
   const long = isLong(post.text)
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const close = (event) => {
+      if (event.type === 'keydown' ? event.key === 'Escape' : !menu.current?.contains(event.target)) setMenuOpen(false)
+    }
+    document.addEventListener('pointerdown', close)
+    document.addEventListener('keydown', close)
+    return () => {
+      document.removeEventListener('pointerdown', close)
+      document.removeEventListener('keydown', close)
+    }
+  }, [menuOpen])
+
+  const choose = (action) => {
+    setMenuOpen(false)
+    setAsking(action)
+  }
 
   return (
     <article className="howl-post is-card">
@@ -18,10 +39,39 @@ function PostCard({ post, onHowl, onReport }) {
       <div>
         <div className="howl-post-who">
           <strong>{post.author}</strong>
+          {mine && <span className="howl-meta">You</span>}
           {post.location && <span className="howl-meta">{post.location}</span>}
           <span className={`howl-meta${isFresh(post.createdAt) ? ' is-fresh' : ''}`}>
             {timeAgo(post.createdAt)}
           </span>
+          {!(post.reported && !mine) && (
+            <div className="post-menu" ref={menu}>
+              <button
+                className="howl-icon-button"
+                aria-label="More options"
+                aria-haspopup="menu"
+                aria-expanded={menuOpen}
+                onClick={() => setMenuOpen(!menuOpen)}
+              >
+                <Icon name="more" />
+              </button>
+              {menuOpen && (
+                <div className="post-menu-list" role="menu">
+                  {mine ? (
+                    <button role="menuitem" className="post-menu-item is-danger" onClick={() => choose('delete')}>
+                      <Icon name="trash" />
+                      Delete post
+                    </button>
+                  ) : (
+                    <button role="menuitem" className="post-menu-item" onClick={() => choose('report')}>
+                      <Icon name="flag" />
+                      Report post
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
         <p className={`howl-post-text${long && !expanded ? ' is-clamped' : ''}`}>{post.text}</p>
         {long && (
@@ -34,8 +84,7 @@ function PostCard({ post, onHowl, onReport }) {
             className={`howl-pill${pop ? ' is-popping' : ''}`}
             aria-pressed={post.howled}
             onClick={() => {
-              setPop(!post.howled)
-              onHowl(post.id)
+              if (onHowl(post.id)) setPop(!post.howled)
             }}
             onAnimationEnd={() => setPop(false)}
           >
@@ -49,27 +98,27 @@ function PostCard({ post, onHowl, onReport }) {
           <button className="howl-icon-button" aria-label="Share">
             <Icon name="share" />
           </button>
-          {post.author !== 'you' && !post.reported && (
-            <button className="howl-more is-report" aria-expanded={asking} onClick={() => setAsking(!asking)}>
-              Report
-            </button>
-          )}
           {post.reported && <span className="howl-meta">Reported</span>}
         </div>
-        {asking && !post.reported && (
-          <div className="howl-notice is-warning" role="group" aria-label="Report this post">
-            <p>Report this post? We hide posts after 3 reports.</p>
+        {asking && (
+          <div className="howl-notice is-warning" role="group" aria-label={asking === 'delete' ? 'Delete this post' : 'Report this post'}>
+            <p>
+              {asking === 'delete'
+                ? 'Delete this post? This can’t be undone.'
+                : 'Report this post? We hide posts after 3 reports.'}
+            </p>
             <div className="howl-post-actions">
               <button
                 className="howl-button"
                 onClick={() => {
-                  setAsking(false)
-                  onReport(post.id)
+                  setAsking(null)
+                  if (asking === 'delete') onDelete(post.id)
+                  else onReport(post.id)
                 }}
               >
-                Report post
+                {asking === 'delete' ? 'Delete post' : 'Report post'}
               </button>
-              <button className="howl-button is-secondary" onClick={() => setAsking(false)}>
+              <button className="howl-button is-secondary" onClick={() => setAsking(null)}>
                 Keep it
               </button>
             </div>

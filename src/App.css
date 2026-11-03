@@ -306,3 +306,230 @@ body {
   flex-wrap: wrap;
   margin-top: 0;
 }
+
+/* Wordmark doubles as a link back to the full feed */
+.brand-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Shown on preview links and on your laptop, where Howl uses sample posts */
+.preview-note {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-8);
+  margin: 0 0 var(--space-16);
+  padding: var(--space-8) var(--space-12);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-soft);
+}
+
+.preview-note strong {
+  color: var(--color-text);
+}
+
+/* Spots, Alerts and Profile pages */
+.page-title {
+  margin: 0 0 var(--space-8);
+  font-size: var(--text-24);
+  line-height: var(--line-height);
+}
+
+.page-lead {
+  margin: 0 0 var(--space-16);
+}
+
+.section-title {
+  margin: var(--space-24) 0 var(--space-12);
+  font-size: var(--text-18);
+}
+
+.spot-list,
+.alert-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-border);
+}
+
+.spot-link {
+  width: 100%;
+  min-height: calc(var(--tap-target) + var(--space-12));
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding: 0 var(--space-4);
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+  background: none;
+  text-align: left;
+}
+
+.spot-link svg {
+  flex: none;
+  color: var(--color-text-muted);
+}
+
+.spot-link:hover {
+  background: var(--color-surface);
+}
+
+.spot-name {
+  flex: 1;
+  font-weight: var(--weight-bold);
+}
+
+.alert-item {
+  display: flex;
+  gap: var(--space-12);
+  padding: var(--space-12) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.alert-item svg {
+  flex: none;
+  color: var(--color-accent-text);
+}
+
+.alert-item p {
+  margin: 0;
+}
+
+.profile-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-8) var(--space-12);
+}
+
+.profile-name {
+  margin: 0;
+  font-size: var(--text-24);
+  line-height: var(--line-height);
+  overflow-wrap: anywhere;
+}
+
+.profile-head .howl-meta {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.profile-out {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+@media (min-width: 640px) {
+  .profile-head {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .profile-out {
+    grid-column: auto;
+  }
+}
+
+.side-account {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-12);
+  margin-top: var(--space-32);
+  padding-top: var(--space-24);
+  border-top: 1px solid var(--color-border);
+}
+
+.side-account p {
+  margin: 0;
+}
+
+/* "…" menu in the top-right corner of each post */
+.howl-post.is-card {
+  position: relative;
+}
+
+.howl-post.is-card .howl-post-who {
+  padding-right: var(--tap-target);
+}
+
+.post-menu {
+  position: absolute;
+  top: var(--space-8);
+  right: var(--space-8);
+}
+
+.post-menu-list {
+  position: absolute;
+  right: 0;
+  top: calc(100% + var(--space-4));
+  z-index: 3;
+  min-width: calc(var(--space-64) * 3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-soft);
+  background: var(--color-background);
+}
+
+.post-menu-item {
+  width: 100%;
+  min-height: var(--tap-target);
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: 0 var(--space-12);
+  border: 0;
+  border-radius: calc(var(--radius-soft) - var(--space-4));
+  background: none;
+  text-align: left;
+}
+
+.post-menu-item:hover {
+  background: var(--color-surface);
+}
+
+.post-menu-item.is-danger {
+  color: var(--color-error);
+  font-weight: var(--weight-bold);
+}
+
+/* Sign-in sheet */
+.sheet-body {
+  display: grid;
+  gap: var(--space-16);
+  padding: var(--space-24);
+}
+
+.sheet-body p {
+  margin: 0;
+}
+
+.sheet-title {
+  margin: 0;
+  font-size: var(--text-24);
+  line-height: var(--line-height);
+}
+
+.sheet-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-8);
+}
+
+.field {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.field-label {
+  font-size: var(--text-14);
+  font-weight: var(--weight-bold);
+}
+
+.field-error {
+  color: var(--color-error);
+  font-size: var(--text-14);
+}

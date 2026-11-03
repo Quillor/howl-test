@@ -256,6 +256,37 @@
   border-color: var(--color-text);
 }
 
+/* Text input: same frame as the select */
+.howl-input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--tap-target);
+  padding: var(--space-8) var(--space-12);
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-soft);
+  background: none;
+  color: inherit;
+  font: inherit;
+}
+
+.howl-input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+.howl-input:hover {
+  border-color: var(--color-text);
+}
+
+.howl-input[aria-invalid='true'] {
+  border-color: var(--color-error);
+}
+
+.howl-surface .howl-input:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
 .howl-composer-bar {
   display: flex;
   align-items: center;

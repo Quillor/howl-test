@@ -5,6 +5,8 @@ Howl is a social app where NC State students share short posts about campus life
 Built with Vite + React (JavaScript). Run it with `npm run dev`.
 
 - `src/App.jsx` is the home screen, with `PostCard.jsx`, `Icon.jsx` and `App.css` beside it. `src/posts.js` holds the sample posts, and `src/postStore.js` is the only place that loads or saves posts (swap it for a database later).
+- `src/postStore.js` uses Supabase when `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are set, and the sample posts otherwise. On Vercel, set those two only for Production, so preview links always show sample posts. The tables and rules are in `supabase/schema.sql`.
+- Accounts: people sign in with an email link (`src/SignIn.jsx`). Anyone can read; posting, howling and reporting need an account. People can delete their own posts from the "…" menu.
 - Styling comes from the design system in `src/design-system/` (tokens, components, tokens.json). Use its named tokens only: no raw colors or sizes in components. The page at `/design-system.html` shows everything.
 - The final design direction is `explorations/final-direction.md`.
 

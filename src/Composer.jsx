@@ -4,12 +4,13 @@ import { MAX_LENGTH, addPost, campusSpots } from './postStore.js'
 
 const COUNTER_FROM = 40
 
-function Composer({ open, initialSpot, onClose, onPosted }) {
+function Composer({ open, user, initialSpot, onClose, onPosted }) {
   const dialog = useRef(null)
   const [text, setText] = useState('')
   const [spot, setSpot] = useState('')
   const [tried, setTried] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [failed, setFailed] = useState(false)
 
   useEffect(() => {
     const el = dialog.current
@@ -23,7 +24,9 @@ function Composer({ open, initialSpot, onClose, onPosted }) {
   const left = MAX_LENGTH - text.length
   const empty = text.trim().length === 0
   const tooLong = left < 0
-  const message = tooLong
+  const message = failed
+    ? "Couldn't post. Check your connection and try again."
+    : tooLong
     ? `That's ${-left} over. Cut ${-left} ${-left === 1 ? 'character' : 'characters'} to post.`
     : tried && empty
       ? 'Add a few words to post.'
@@ -34,7 +37,15 @@ function Composer({ open, initialSpot, onClose, onPosted }) {
     setTried(true)
     if (empty || tooLong) return
     setSaving(true)
-    const post = await addPost({ text, location: spot })
+    setFailed(false)
+    let post
+    try {
+      post = await addPost({ user, text, location: spot })
+    } catch {
+      setFailed(true)
+      setSaving(false)
+      return
+    }
     setSaving(false)
     setText('')
     setSpot('')
@@ -52,7 +63,7 @@ function Composer({ open, initialSpot, onClose, onPosted }) {
     >
       <form className="howl-composer" onSubmit={submit} noValidate>
         <div className="howl-avatar" aria-hidden="true">
-          Y
+          {user?.name[0].toUpperCase()}
         </div>
         <div>
           <textarea
