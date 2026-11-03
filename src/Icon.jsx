@@ -7,6 +7,7 @@ const paths = {
   write: '<path d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4"/>',
   bell: '<path d="M6 17V11a6 6 0 1 1 12 0v6l2 2H4zM10 21h4"/>',
   error: '<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>',
+  ok: '<path d="M5 12.5 10 17.5 19 7"/>',
   user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/>',
 }
 

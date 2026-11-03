@@ -1,8 +1,9 @@
 import Icon from './Icon.jsx'
 import Composer from './Composer.jsx'
 import PostCard from './PostCard.jsx'
+import SpotTags from './SpotTags.jsx'
 import { useEffect, useState } from 'react'
-import { getPosts, setHowled } from './postStore.js'
+import { campusSpots, getPosts, setHowled } from './postStore.js'
 
 const navItems = [
   { label: 'Home', icon: 'home', current: true },
@@ -17,6 +18,7 @@ function App() {
   const [failed, setFailed] = useState(false)
   const [attempt, setAttempt] = useState(0)
   const [writing, setWriting] = useState(false)
+  const [spot, setSpot] = useState(null)
 
   useEffect(() => {
     let current = true
@@ -36,6 +38,7 @@ function App() {
 
   const posted = (post) => {
     setPosts((current) => [post, ...(current ?? [])])
+    if (spot && post.location !== spot) setSpot(null)
     setWriting(false)
     window.scrollTo({ top: 0 })
   }
@@ -57,7 +60,7 @@ function App() {
     }
   }
 
-  const spots = [...new Set((posts ?? []).map((post) => post.location).filter(Boolean))].slice(0, 8)
+  const shown = spot ? (posts ?? []).filter((post) => post.location === spot) : posts
 
   return (
     <div className="app howl-surface">
@@ -89,7 +92,8 @@ function App() {
       </div>
 
       <main className="feed">
-        <h2 className="feed-title">Latest posts</h2>
+        <h2 className="feed-title">{spot ?? 'Latest posts'}</h2>
+        <SpotTags className="spot-row" spots={campusSpots} selected={spot} onSelect={setSpot} />
         {failed ? (
           <div className="howl-empty" role="alert">
             <p>Couldn't load posts. Check your connection and try again.</p>
@@ -101,16 +105,18 @@ function App() {
           <p className="howl-meta feed-status" role="status">
             Loading posts…
           </p>
-        ) : posts.length === 0 ? (
+        ) : shown.length === 0 ? (
           <div className="howl-empty">
-            <p>No posts yet. Be the first to post from campus.</p>
+            <p>
+              {spot ? `No posts from ${spot} yet. Be the first.` : 'No posts yet. Be the first to post from campus.'}
+            </p>
             <button className="howl-button" onClick={() => setWriting(true)}>
               Write a post
             </button>
           </div>
         ) : (
           <ol className="feed-list">
-            {posts.map((post) => (
+            {shown.map((post) => (
               <li key={post.id}>
                 <PostCard post={post} onHowl={toggleHowl} />
               </li>
@@ -119,17 +125,11 @@ function App() {
         )}
       </main>
 
-      <Composer open={writing} onClose={() => setWriting(false)} onPosted={posted} />
+      <Composer open={writing} initialSpot={spot} onClose={() => setWriting(false)} onPosted={posted} />
 
       <aside className="side" aria-label="Campus spots">
-        {spots.length > 0 && <h2 className="side-title">Spots</h2>}
-        <div className="tag-row">
-          {spots.map((spot) => (
-            <button key={spot} className="howl-tag" aria-pressed="false">
-              {spot}
-            </button>
-          ))}
-        </div>
+        <h2 className="side-title">Spots</h2>
+        <SpotTags className="tag-row" spots={campusSpots} selected={spot} onSelect={setSpot} />
       </aside>
     </div>
   )

@@ -4,7 +4,7 @@ import { MAX_LENGTH, addPost, campusSpots } from './postStore.js'
 
 const COUNTER_FROM = 40
 
-function Composer({ open, onClose, onPosted }) {
+function Composer({ open, initialSpot, onClose, onPosted }) {
   const dialog = useRef(null)
   const [text, setText] = useState('')
   const [spot, setSpot] = useState('')
@@ -13,7 +13,10 @@ function Composer({ open, onClose, onPosted }) {
 
   useEffect(() => {
     const el = dialog.current
-    if (open && !el.open) el.showModal()
+    if (open && !el.open) {
+      setSpot(initialSpot ?? '')
+      el.showModal()
+    }
     if (!open && el.open) el.close()
   }, [open])
 

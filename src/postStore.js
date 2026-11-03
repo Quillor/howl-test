@@ -16,7 +16,12 @@ const toPost = (sample, index = 0) => ({
 })
 
 export const MAX_LENGTH = 280
-export const campusSpots = [...new Set(samples.map((sample) => sample.location).filter(Boolean))]
+export const campusSpots = [
+  ...new Set(samples.map((sample) => sample.location).filter(Boolean)),
+  'Witherspoon Student Center',
+  'Carmichael Gym',
+  'Free Expression Tunnel',
+]
 
 const STORAGE_KEY = 'howl.myPosts'
 

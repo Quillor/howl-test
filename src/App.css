@@ -132,6 +132,18 @@ body {
   line-height: var(--line-height);
 }
 
+.spot-row {
+  display: flex;
+  gap: var(--space-8);
+  margin: 0 0 var(--space-16);
+  padding-bottom: var(--space-8);
+  overflow-x: auto;
+}
+
+.spot-row .howl-tag {
+  flex: none;
+}
+
 .side-title {
   margin: 0 0 var(--space-12);
   font-size: var(--text-18);
@@ -224,6 +236,10 @@ body {
 
   .feed-title {
     display: block;
+  }
+
+  .spot-row {
+    display: none;
   }
 
   .side {
