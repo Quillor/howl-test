@@ -23,18 +23,6 @@ function PostPhoto({ image, full }) {
           ref={(el) => el?.complete && el.naturalWidth && !loaded && setLoaded(true)}
         />
       </div>
-      {image.credit && (
-        <figcaption className="howl-meta post-photo-credit">
-          Photo:{' '}
-          {image.creditUrl ? (
-            <a href={image.creditUrl} target="_blank" rel="noopener noreferrer">
-              {image.credit}
-            </a>
-          ) : (
-            image.credit
-          )}
-        </figcaption>
-      )}
     </figure>
   )
 }

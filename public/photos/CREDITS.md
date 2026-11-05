@@ -1,6 +1,8 @@
 # Photo credits
 
-Sample photos of NC State's campus, from Wikimedia Commons. Resized to 1200px wide; otherwise unchanged.
+Sample photos of NC State's campus, from Wikimedia Commons. Relit to golden hour with an AI image editor (Nano Banana Pro) and resized to 1200px wide.
+
+The app doesn't show these credits yet. Most of these licenses (CC BY and CC BY-SA) require crediting the photographer wherever the photo appears, so add credits back before sharing Howl widely.
 
 | File | Photographer | License | Source |
 |---|---|---|---|

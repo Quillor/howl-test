@@ -23,16 +23,16 @@ export const posts = [
   { id: 15, author: 'ben_o', hoursAgo: 120, howls: 2, text: 'Career fair is tomorrow in Talley. Bring resumes, wear a blazer, and eat something first.' },
 ]
 
-// Real NC State photos from Wikimedia Commons, saved in public/photos. Credits are shown with each photo.
+// Real NC State photos from Wikimedia Commons, relit to golden hour, saved in public/photos. Sources are in public/photos/CREDITS.md.
 export const photos = {
-  'belltower': { alt: "The Memorial Belltower framed by pink and white blossoming trees under a blue sky", width: 1200, height: 798, credit: "Suzie Tremmel from Raleigh, USA, CC BY 2.0", creditUrl: "https://commons.wikimedia.org/wiki/File:Belltower_ncsu.jpg" },
-  'brickyard': { alt: "The Brickyard, a wide plaza of red and gray brick patterns with trees and students crossing", width: 1200, height: 799, credit: "Surrahwall, CC BY-SA 3.0", creditUrl: "https://commons.wikimedia.org/wiki/File:Brickyard.JPG" },
-  'carter-finley': { alt: "Aerial view of a packed Carter-Finley Stadium in red, with tailgate lots full of cars", width: 1200, height: 803, credit: "SMaloney, CC BY 3.0", creditUrl: "https://commons.wikimedia.org/wiki/File:Carter-Finley_Stadium_1.jpg" },
-  'hunt-commons': { alt: "Bright study area inside Hunt Library with tall windows, red couches and students at tables", width: 1200, height: 800, credit: "Seannator, CC BY-SA 3.0", creditUrl: "https://commons.wikimedia.org/wiki/File:Hunt_Library_Commons_Area.JPG" },
-  'hunt-rooftop-sunset': { alt: "Sunset over Lake Raleigh from the Hunt Library rooftop terrace, with empty caf\u00e9 tables", width: 1200, height: 900, credit: "Rhododendrites, CC BY-SA 3.0", creditUrl: "https://commons.wikimedia.org/wiki/File:NCSU_Hunt_Library_rooftop_study_area_2013-01.jpg" },
-  'talley': { alt: "Talley Student Union with red umbrellas on the patio and a green lawn in front", width: 1200, height: 773, credit: "Abbylabar, CC BY-SA 3.0", creditUrl: "https://commons.wikimedia.org/wiki/File:Talley_Student_Union.JPG" },
-  'dh-hill': { alt: "The red brick tower of D. H. Hill Jr. Library above the Brickyard on a sunny day", width: 1200, height: 799, credit: "Surrahwall, CC BY-SA 3.0", creditUrl: "https://commons.wikimedia.org/wiki/File:D.H._Hill_Library.JPG" },
-  'free-expression-tunnel': { alt: "Students walking through the Free Expression Tunnel, its walls covered in red and white paint", width: 1200, height: 900, credit: "Ducttapeavenger, Public domain", creditUrl: "https://commons.wikimedia.org/wiki/File:Freeexpressiontunnel-ncsu.jpg" },
+  'belltower': { alt: "The Memorial Belltower glowing in golden sunset light, framed by pink and white blossoming trees", width: 1200, height: 805, credit: "Suzie Tremmel from Raleigh, USA, CC BY 2.0", creditUrl: "https://commons.wikimedia.org/wiki/File:Belltower_ncsu.jpg" },
+  'brickyard': { alt: "The Brickyard at sunset, with long tree shadows stretching across its red and gray brick patterns", width: 1200, height: 805, credit: "Surrahwall, CC BY-SA 3.0", creditUrl: "https://commons.wikimedia.org/wiki/File:Brickyard.JPG" },
+  'carter-finley': { alt: "Aerial view of a packed Carter-Finley Stadium in red at golden hour, with tailgate lots full of cars", width: 1200, height: 805, credit: "SMaloney, CC BY 3.0", creditUrl: "https://commons.wikimedia.org/wiki/File:Carter-Finley_Stadium_1.jpg" },
+  'hunt-commons': { alt: "Golden sunset light streaming through Hunt Library's tall windows across the study area and red couches", width: 1200, height: 805, credit: "Seannator, CC BY-SA 3.0", creditUrl: "https://commons.wikimedia.org/wiki/File:Hunt_Library_Commons_Area.JPG" },
+  'hunt-rooftop-sunset': { alt: "An orange and rose sunset over Lake Raleigh from the Hunt Library rooftop terrace, with caf\u00e9 tables", width: 1200, height: 896, credit: "Rhododendrites, CC BY-SA 3.0", creditUrl: "https://commons.wikimedia.org/wiki/File:NCSU_Hunt_Library_rooftop_study_area_2013-01.jpg" },
+  'talley': { alt: "Talley Student Union at sunset, with red umbrellas on the patio and long shadows across the lawn", width: 1200, height: 805, credit: "Abbylabar, CC BY-SA 3.0", creditUrl: "https://commons.wikimedia.org/wiki/File:Talley_Student_Union.JPG" },
+  'dh-hill': { alt: "The red brick tower of D. H. Hill Jr. Library glowing orange at sunset above the Brickyard", width: 1200, height: 805, credit: "Surrahwall, CC BY-SA 3.0", creditUrl: "https://commons.wikimedia.org/wiki/File:D.H._Hill_Library.JPG" },
+  'free-expression-tunnel': { alt: "Golden sunset light pouring into the Free Expression Tunnel past students and walls painted red", width: 1200, height: 896, credit: "Ducttapeavenger, Public domain", creditUrl: "https://commons.wikimedia.org/wiki/File:Freeexpressiontunnel-ncsu.jpg" },
 }
 
 // Sample comments, by post id. minutesAfter counts from when the post went up.

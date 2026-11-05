@@ -718,19 +718,6 @@ body {
   transform: scale(1.015);
 }
 
-.post-photo-credit {
-  margin-top: var(--space-4);
-}
-
-.post-photo-credit a {
-  color: inherit;
-  text-underline-offset: 2px;
-}
-
-.post-photo-credit a:hover {
-  color: var(--color-text);
-}
-
 /* Photo in the write box */
 .compose-photo {
   display: grid;

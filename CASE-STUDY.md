@@ -31,7 +31,7 @@ Motion stays quiet: posts fade in one after another, the Howl button pops and th
 - Posting up to 280 characters, with a counter and a friendly hint.
 - Howling, Howl's own version of a like: one per person per post, with a clear "Howled" state.
 - A page for every post, with comments, and a share button that opens the phone's share sheet.
-- Photos on posts, with a required description for screen readers. Photos shrink on the phone before upload, and sample posts use real campus photos with credits.
+- Photos on posts, with a required description for screen readers. Photos shrink on the phone before upload, and sample posts use real campus photos, relit to golden hour.
 - Campus events, with an "I'm going" button and the next three events beside the feed on a laptop.
 - Reporting: a post is hidden after 3 reports.
 - A link preview image and a small icon, so shared links look right in group chats.
