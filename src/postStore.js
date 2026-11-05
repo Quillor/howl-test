@@ -111,16 +111,6 @@ export async function getPosts() {
   return withMyMarks(newestFirst([...read(MINE_KEY, []), ...sampleList]))
 }
 
-// One post, for its own page. Returns null if it doesn't exist or was hidden.
-export async function getPost(postId) {
-  if (supabase) {
-    const rows = check(await supabase.from('feed').select('*').eq('id', postId))
-    return rows[0] ? fromRow(rows[0]) : null
-  }
-  const all = withMyMarks([...read(MINE_KEY, []), ...sampleList])
-  return all.find((post) => String(post.id) === String(postId)) ?? null
-}
-
 export async function addPost({ user, text }) {
   const clean = text.trim()
   if (clean.length === 0 || clean.length > MAX_LENGTH) throw new Error('Invalid post')

@@ -9,6 +9,16 @@ export default defineConfig({
   plugins: [
     react(),
     { name: 'site-url', transformIndexHtml: (html) => html.replaceAll('%SITE_URL%', siteUrl) },
+    // The lesson lives at public/lesson/index.html. Serve it at /lesson while working locally, like Vercel does.
+    {
+      name: 'lesson-page',
+      configureServer(server) {
+        server.middlewares.use((req, _res, next) => {
+          if (req.url === '/lesson' || req.url === '/lesson/') req.url = '/lesson/index.html'
+          next()
+        })
+      },
+    },
   ],
   build: {
     rollupOptions: {
