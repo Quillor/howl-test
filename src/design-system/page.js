@@ -7,9 +7,10 @@ const colorNames = [
   ['border-strong', 'Field and button borders'],
   ['text', 'Posts and headings'],
   ['text-muted', 'Handles, times and hints'],
-  ['accent', 'Buttons and Write'],
+  ['accent', 'Buttons, Write and Howled'],
+  ['accent-hover', 'Buttons on hover'],
   ['on-accent', 'Text on accent'],
-  ['accent-text', 'Fresh times'],
+  ['accent-text', 'Fresh times and event months'],
   ['focus', 'Focus ring'],
   ['success', 'Posted or saved'],
   ['warning', 'Running low'],
@@ -20,7 +21,7 @@ const textStyles = [
   ['Wordmark', 'howl-wordmark', 'Howl · 24 bold'],
   ['Post text', 'howl-post-text', 'Free pizza outside the Brickyard · 18 regular'],
   ['Body', '', 'Write a post · 16 regular'],
-  ['Meta', 'howl-meta', 'Hunt Library · 14 regular'],
+  ['Meta', 'howl-meta', 'maya_t · 2h ago · 14 regular'],
   ['Fresh time', 'howl-meta is-fresh', '2h ago · 14 bold'],
 ]
 
@@ -32,7 +33,7 @@ const icon = (d) =>
 const icons = {
   howl: icon('<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/>'),
   reply: icon('<path d="M21 12a8 8 0 0 1-11.6 7.1L3 20.5l1.5-5A8 8 0 1 1 21 12z"/>'),
-  share: icon('<path d="M7 17 17 7M8 7h9v9"/>'),
+  share: icon('<path d="M12 15V3M8 7l4-4 4 4"/><path d="M8 11H6a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-2"/>'),
   ok: icon('<path d="M5 12.5 10 17.5 19 7"/>'),
   warn: icon('<path d="M12 4 2.5 20h19zM12 10v4M12 17h.01"/>'),
   error: icon('<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>'),
@@ -90,7 +91,7 @@ const buttons = () =>
     ]),
   ) +
   group(
-    'Reply and share (icon only)',
+    'Comments and share (icon only)',
     states([
       ['Normal', `<button class="howl-icon-button" aria-label="Reply">${icons.reply}</button>`],
       ['Hover', `<button class="howl-icon-button is-hover" aria-label="Reply">${icons.reply}</button>`],
@@ -129,12 +130,12 @@ const post = (p, { cls = '', fresh = false, howled = false, disabled = false, cl
   <article class="howl-post ${cls}">
     <div class="howl-avatar" aria-hidden="true">${p.author[0].toUpperCase()}</div>
     <div>
-      <div class="howl-post-who"><strong>${p.author}</strong><span class="howl-meta">${p.location ?? ''}</span><span class="howl-meta${fresh ? ' is-fresh' : ''}">${disabled ? 'Sending…' : p.time}</span></div>
+      <div class="howl-post-who"><strong>${p.author}</strong><span class="howl-meta${fresh ? ' is-fresh' : ''}">${disabled ? 'Sending…' : p.time}</span></div>
       <p class="howl-post-text${clamp ? ' is-clamped' : ''}">${p.text}</p>
       ${more ? '<button class="howl-more">Show more</button>' : ''}
       <div class="howl-post-actions">
         <button class="howl-pill" aria-pressed="${howled}" ${disabled ? 'disabled' : ''}>${icons.howl}${howled ? 'Howled' : 'Howl'}</button>
-        <button class="howl-icon-button" aria-label="Reply" ${disabled ? 'disabled' : ''}>${icons.reply}</button>
+        <button class="howl-icon-button has-count" aria-label="3 comments" ${disabled ? 'disabled' : ''}>${icons.reply}<span class="howl-count">3</span></button>
         <button class="howl-icon-button" aria-label="Share" ${disabled ? 'disabled' : ''}>${icons.share}</button>
       </div>
     </div>
@@ -150,10 +151,9 @@ const postStates = (list) => {
     ['Selected', post(a, { cls: 'is-selected', fresh: true, howled: true })],
     ['Disabled: still sending', post(a, { cls: 'is-disabled', disabled: true })],
     ['Long post', post(longPost, { clamp: true, more: true })],
-    ['No location', post({ ...b, location: '' })],
     [
       'Empty',
-      '<div class="howl-empty"><p>No posts from Hunt Library yet. Be the first.</p><button class="howl-button is-secondary">Write one</button></div>',
+      '<div class="howl-empty"><p>No posts yet. Be the first to post from campus.</p><button class="howl-button is-secondary">Write one</button></div>',
     ],
   ]
     .map(([label, html]) => `<div class="state-group"><span class="howl-meta state-label">${label}</span><div class="feed">${html}</div></div>`)
@@ -185,23 +185,29 @@ const avatars = () =>
     ]),
   )
 
-const tag = (label, { cls = '', pressed = false, disabled = false } = {}) =>
-  `<button class="howl-tag ${cls}" aria-pressed="${pressed}" ${disabled ? 'disabled' : ''}>${pressed ? icons.ok : icons.pin}${label}</button>`
+const eventCard = ({ month, day, title, when, place, going, count, past = false, cls = '' }) =>
+  `<article class="howl-event ${past ? 'is-past' : ''}">
+    <div class="howl-event-date" aria-hidden="true"><span class="month">${month}</span><span class="day">${day}</span></div>
+    <div>
+      <h4 class="howl-event-title">${title}</h4>
+      <p class="howl-meta">${when} · ${place}</p>
+      <div class="howl-post-actions">${
+        past
+          ? `<span class="howl-meta">${count} went</span>`
+          : `<button class="howl-button is-secondary ${cls}" aria-pressed="${going}">${going ? icons.ok : ''}${going ? 'Going' : "I'm going"}</button><span class="howl-meta">${count} going</span>`
+      }</div>
+    </div>
+  </article>`
 
-const tags = () =>
+const events = () =>
   group(
-    'One tag, every state',
+    'One event, every state',
     states([
-      ['Normal', tag('Hunt Library')],
-      ['Hover', tag('Hunt Library', { cls: 'is-hover' })],
-      ['Pressed', tag('Hunt Library', { cls: 'is-pressed' })],
-      ['Selected', tag('Hunt Library', { pressed: true })],
-      ['Disabled', tag('Hunt Library', { disabled: true })],
+      ['Normal', eventCard({ month: 'Nov', day: 7, title: 'Robotics club open lab', when: 'Tomorrow · 6 PM', place: 'Engineering Building II', going: false, count: 23 })],
+      ['Hover', eventCard({ month: 'Nov', day: 7, title: 'Robotics club open lab', when: 'Tomorrow · 6 PM', place: 'Engineering Building II', going: false, count: 23, cls: 'is-hover' })],
+      ['Going', eventCard({ month: 'Nov', day: 7, title: 'Robotics club open lab', when: 'Tomorrow · 6 PM', place: 'Engineering Building II', going: true, count: 24 })],
+      ['Over', eventCard({ month: 'Nov', day: 2, title: 'Pumpkin carving on the Brickyard', when: 'Mon, Nov 2 · 4 PM', place: 'Brickyard', past: true, count: 64 })],
     ]),
-  ) +
-  group(
-    'A row of spots (names are long, so they wrap)',
-    `<div class="tag-row">${tag('Brickyard', { pressed: true })}${tag('Hunt Library')}${tag('Talley Student Union')}${tag('Centennial Campus')}${tag('Carter-Finley Stadium')}${tag('D. H. Hill Jr. Library', { disabled: true })}</div>`,
   )
 
 const buildMode = (theme) => {
@@ -260,8 +266,8 @@ const buildMode = (theme) => {
     <h3>Profile picture</h3>
     ${avatars()}
 
-    <h3>Campus spot tags</h3>
-    ${tags()}
+    <h3>Event card</h3>
+    ${events()}
 
     <h3>Tabs</h3>
     <div class="tabs">

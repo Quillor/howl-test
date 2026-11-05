@@ -4,8 +4,11 @@
 Howl is a social app where NC State students share short posts about campus life.
 Built with Vite + React (JavaScript). Run it with `npm run dev`.
 
-- `src/App.jsx` is the home screen, with `PostCard.jsx`, `Icon.jsx` and `App.css` beside it. `src/posts.js` holds the sample posts, and `src/postStore.js` is the only place that loads or saves posts (swap it for a database later).
-- Styling comes from the design system in `src/design-system/` (tokens, components, tokens.json). Use its named tokens only: no raw colors or sizes in components. The page at `/design-system.html` shows everything.
+- `src/App.jsx` holds the pages, with `PostCard.jsx`, `PostPage.jsx` (a post and its comments), `Events.jsx`, `Icon.jsx` and `App.css` beside it. `src/posts.js` holds the sample posts, comments and events, and `src/postStore.js` is the only place that loads or saves them. For now everything is saved in the browser; swap the store's insides for a database later.
+- Pages have real addresses (`/`, `/events`, `/post/12`, `/alerts`, `/profile`) through `src/router.jsx`. New addresses also need a rewrite in `vercel.json`.
+- The lesson is published at `/lesson` from `public/lesson/index.html`. Its source lives outside this repo; copy it in when it changes.
+- Motion: use the timing tokens and `howl-rise` (cascading fade-in, set `--i` on each item) from `components.css`. Everything stops for people who turn on Reduce Motion.
+- Styling comes from the design system in `src/design-system/` (tokens, components, tokens.json). Use its named tokens only: no raw colors or sizes in components. The main color is NC State red, and every color pair must pass WCAG AA in light and dark mode. The page at `/design-system.html` shows everything.
 - The final design direction is `explorations/final-direction.md`.
 
 ## Explorations

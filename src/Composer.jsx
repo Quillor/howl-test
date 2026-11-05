@@ -1,29 +1,28 @@
 import { useEffect, useRef, useState } from 'react'
 import Icon from './Icon.jsx'
-import { MAX_LENGTH, addPost, campusSpots } from './postStore.js'
+import { MAX_LENGTH, addPost } from './postStore.js'
 
 const COUNTER_FROM = 40
 
-function Composer({ open, initialSpot, onClose, onPosted }) {
+function Composer({ open, user, onClose, onPosted }) {
   const dialog = useRef(null)
   const [text, setText] = useState('')
-  const [spot, setSpot] = useState('')
   const [tried, setTried] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [failed, setFailed] = useState(false)
 
   useEffect(() => {
     const el = dialog.current
-    if (open && !el.open) {
-      setSpot(initialSpot ?? '')
-      el.showModal()
-    }
+    if (open && !el.open) el.showModal()
     if (!open && el.open) el.close()
-  }, [open, initialSpot])
+  }, [open])
 
   const left = MAX_LENGTH - text.length
   const empty = text.trim().length === 0
   const tooLong = left < 0
-  const message = tooLong
+  const message = failed
+    ? "Couldn't post. Check your connection and try again."
+    : tooLong
     ? `That's ${-left} over. Cut ${-left} ${-left === 1 ? 'character' : 'characters'} to post.`
     : tried && empty
       ? 'Add a few words to post.'
@@ -34,10 +33,17 @@ function Composer({ open, initialSpot, onClose, onPosted }) {
     setTried(true)
     if (empty || tooLong) return
     setSaving(true)
-    const post = await addPost({ text, location: spot })
+    setFailed(false)
+    let post
+    try {
+      post = await addPost({ user, text })
+    } catch {
+      setFailed(true)
+      setSaving(false)
+      return
+    }
     setSaving(false)
     setText('')
-    setSpot('')
     setTried(false)
     onPosted(post)
   }
@@ -52,7 +58,7 @@ function Composer({ open, initialSpot, onClose, onPosted }) {
     >
       <form className="howl-composer" onSubmit={submit} noValidate>
         <div className="howl-avatar" aria-hidden="true">
-          Y
+          {user?.name[0].toUpperCase()}
         </div>
         <div>
           <textarea
@@ -63,17 +69,6 @@ function Composer({ open, initialSpot, onClose, onPosted }) {
             value={text}
             onChange={(event) => setText(event.target.value)}
           />
-          <select
-            className="howl-select"
-            aria-label="Campus spot"
-            value={spot}
-            onChange={(event) => setSpot(event.target.value)}
-          >
-            <option value="">Add a spot (optional)</option>
-            {campusSpots.map((name) => (
-              <option key={name}>{name}</option>
-            ))}
-          </select>
           {message && (
             <div className="howl-notice is-error compose-message" role="alert">
               <Icon name="error" />

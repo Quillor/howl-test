@@ -1,5 +1,6 @@
 /* Howl design tokens. Source: explorations/final-direction.md (round 02, version B).
-   Dark mode is the direction exactly as written. Light mode swaps only the named values. */
+   Main color: NC State red (#CC0000). Every text pair passes WCAG AA (4.5:1) in both modes,
+   and buttons, fields and focus rings reach 3:1 against what's around them. */
 
 :root {
   /* Raw values */
@@ -14,6 +15,9 @@
   --gray-1000: #000000;
   --amber-500: #ffc21a;
   --amber-700: #7a5200;
+  --wolfpack-red-light: #e01b1b;
+  --wolfpack-red: #cc0000;
+  --wolfpack-red-dark: #990000;
   --green-400: #4ade80;
   --green-700: #17703a;
   --red-400: #ff6b6b;
@@ -54,9 +58,10 @@
   --color-border-strong: var(--gray-400);
   --color-text: var(--gray-900);
   --color-text-muted: var(--gray-600);
-  --color-accent: var(--amber-500);
-  --color-on-accent: var(--gray-1000);
-  --color-accent-text: var(--amber-700);
+  --color-accent: var(--wolfpack-red);
+  --color-accent-hover: var(--wolfpack-red-dark);
+  --color-on-accent: var(--gray-0);
+  --color-accent-text: var(--wolfpack-red);
   --color-focus: var(--gray-1000);
   --color-success: var(--green-700);
   --color-warning: var(--amber-700);
@@ -72,10 +77,11 @@
     --color-border-strong: var(--gray-400);
     --color-text: var(--gray-50);
     --color-text-muted: var(--gray-400);
-    --color-accent-text: var(--amber-500);
+    --color-accent-text: var(--red-400);
     --color-focus: var(--gray-0);
     --color-success: var(--green-400);
     --color-warning: var(--amber-500);
+    --color-accent-hover: var(--wolfpack-red-light);
     --color-error: var(--red-400);
   }
 }
@@ -87,9 +93,10 @@
   --color-border-strong: var(--gray-400);
   --color-text: var(--gray-50);
   --color-text-muted: var(--gray-400);
-  --color-accent-text: var(--amber-500);
+  --color-accent-text: var(--red-400);
   --color-focus: var(--gray-0);
   --color-success: var(--green-400);
   --color-warning: var(--amber-500);
+  --color-accent-hover: var(--wolfpack-red-light);
   --color-error: var(--red-400);
 }

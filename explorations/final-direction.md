@@ -4,6 +4,7 @@
 No changes were made in Figma, so the built version is the final word.
 
 **How we got here**
+- Update: the accent changed from amber to NC State red (`#CC0000`), the school's own color.
 - Round 01: three directions. A "Loud" (red, giant wordmark) gave us the Howl reaction. B "Late shift" (true black, amber) gave us the base. C "Howl bar" was too heavy and is not used.
 - Round 02: B with A's reaction as a pill, post text raised to 18px, colors unchanged. Version B won: loud and fun, still easy to read.
 
@@ -20,7 +21,7 @@ Loud, warm, quick. A late-night feed where the newest posts glow. Type does the 
 | Gray | `#8A8A8A` | Places, times, quiet actions |
 | Line | `#2B2B2B` | Thin dividers |
 | Chip | `#1C1C1C` | Hover, avatars, disabled |
-| Amber | `#FFC21A` | The only accent: fresh times, a Howled pill, the Post button |
+| Wolfpack red | `#CC0000` | The only accent: NC State's own red. Fresh times, a Howled pill, the Post button. In dark mode, red text uses the lighter `#FF6B6B` so it stays readable. |
 
 ## Fonts
 
@@ -33,12 +34,12 @@ Loud, warm, quick. A late-night feed where the newest posts glow. Type does the 
 
 - No cards. Posts are rows separated by 1px dividers.
 - Round avatars (32px). Pill buttons (44px tall, fully rounded).
-- The Howl reaction is a crescent moon plus the word "Howl". It becomes "Howled" and fills amber when pressed.
+- The Howl reaction is a crescent moon plus the word "Howl". It becomes "Howled" and fills red when pressed.
 - Spacing: 4, 8, 12, 16, 24, 32, 48, 64 only.
 
 ## Do
 
-1. Spend amber only on what is fresh or pressed.
+1. Spend red only on what is fresh or pressed.
 2. Let type carry each screen, with one bold move.
 3. Keep post text at 18px or larger, with 1.5 line spacing.
 4. Use Howl, with its crescent, as the reaction everywhere.

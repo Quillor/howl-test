@@ -1,5 +1,10 @@
 {
   "cleanUrls": true,
+  "rewrites": [
+    { "source": "/lesson", "destination": "/lesson/index.html" },
+    { "source": "/post/:id", "destination": "/" },
+    { "source": "/(events|alerts|profile)", "destination": "/" }
+  ],
   "headers": [
     {
       "source": "/design-system(.html)?",
