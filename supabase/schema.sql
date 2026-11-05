@@ -1,5 +1,5 @@
 -- Howl database. Paste into Supabase: SQL Editor > New query > Run.
--- Anyone can read posts, comments and events. Signed-in people can post, howl, comment, report,
+-- Anyone can read posts, photos, comments and events. Signed-in people can post, howl, comment, report,
 -- say they're going to events and delete their own posts.
 -- Nobody can edit posts, and posts are 1 to 280 characters.
 
@@ -16,7 +16,15 @@ create table public.posts (
   location text,
   text text not null check (char_length(btrim(text)) between 1 and 280),
   sample_howls int not null default 0,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  -- An optional photo. It always needs a description, for people who can't see it.
+  image_url text,
+  image_alt text check (char_length(btrim(image_alt)) between 1 and 300),
+  image_width int check (image_width between 1 and 10000),
+  image_height int check (image_height between 1 and 10000),
+  image_credit text,
+  image_credit_url text,
+  constraint photo_needs_description check ((image_url is null) = (image_alt is null))
 );
 
 create table public.howls (
@@ -81,7 +89,8 @@ select
   p.sample_howls + (select count(*) from public.howls h where h.post_id = p.id)::int as howls,
   exists (select 1 from public.howls h where h.post_id = p.id and h.user_id = auth.uid()) as howled,
   exists (select 1 from public.reports r where r.post_id = p.id and r.user_id = auth.uid()) as reported,
-  (select count(*) from public.comments c where c.post_id = p.id)::int as comments
+  (select count(*) from public.comments c where c.post_id = p.id)::int as comments,
+  p.image_url, p.image_alt, p.image_width, p.image_height, p.image_credit, p.image_credit_url
 from public.posts p
 left join public.profiles pr on pr.id = p.author_id
 where (select count(*) from public.reports r where r.post_id = p.id) < 3;
@@ -112,8 +121,13 @@ create policy "Anyone can see names" on public.profiles for select using (true);
 create policy "People rename themselves" on public.profiles for update using (id = auth.uid());
 
 create policy "Anyone can read posts" on public.posts for select using (true);
+-- People can only attach photos they uploaded to their own folder, and can't fake a photo credit.
 create policy "Signed-in people post as themselves" on public.posts for insert to authenticated
-  with check (author_id = auth.uid() and author_name is null and sample_howls = 0);
+  with check (
+    author_id = auth.uid() and author_name is null and sample_howls = 0
+    and image_credit is null and image_credit_url is null
+    and (image_url is null or image_url like 'https://yfgiankuswodcnzirrcy.supabase.co/storage/v1/object/public/post-photos/' || auth.uid()::text || '/%')
+  );
 create policy "People delete their own posts" on public.posts for delete to authenticated
   using (author_id = auth.uid());
 
@@ -136,6 +150,15 @@ create policy "People see their own RSVPs" on public.event_rsvps for select to a
 create policy "Signed-in people say they're going" on public.event_rsvps for insert to authenticated with check (user_id = auth.uid());
 create policy "People change their mind" on public.event_rsvps for delete to authenticated using (user_id = auth.uid());
 
+-- Photo storage: anyone can view, people add and remove only in their own folder. Up to 5 MB, images only.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('post-photos', 'post-photos', true, 5242880, array['image/jpeg', 'image/png', 'image/webp']);
+
+create policy "People upload photos to their own folder" on storage.objects for insert to authenticated
+  with check (bucket_id = 'post-photos' and (storage.foldername(name))[1] = auth.uid()::text);
+create policy "People delete their own photos" on storage.objects for delete to authenticated
+  using (bucket_id = 'post-photos' and (storage.foldername(name))[1] = auth.uid()::text);
+
 grant select on public.feed to anon, authenticated;
 grant select on public.comment_list to anon, authenticated;
 grant select on public.event_list to anon, authenticated;
@@ -149,3 +172,5 @@ insert into public.posts (author_id, author_name, location, text, sample_howls, 
   (null, 'emily.r', 'Centennial Campus', 'Took the Wolfline to Centennial for the first time and wow, it is a totally different vibe over here.', 14, now() - interval '25 hours'),
   (null, 'aaliyah_m', 'Lake Raleigh', 'Sunset at Lake Raleigh tonight was unreal. Highly recommend a walk after your last class.', 40, now() - interval '48 hours'),
   (null, 'lucia_v', null, 'Why is it always either 85 degrees or freezing in Raleigh in October? I am so confused about what to wear.', 7, now() - interval '120 hours');
+
+-- Sample photos for the posts above: see add-photos.sql.

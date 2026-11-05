@@ -5,6 +5,40 @@ import { isFresh, timeAgo } from './timeAgo.js'
 
 const isLong = (text) => text.length > 160
 
+// A post's photo. It fades in once loaded, and keeps its shape while loading so the page doesn't jump.
+function PostPhoto({ image, full }) {
+  const [loaded, setLoaded] = useState(false)
+  return (
+    <figure className={`post-photo${full ? ' is-full' : ''}`}>
+      <div className="post-photo-frame" style={{ aspectRatio: `${image.width} / ${image.height}` }}>
+        <img
+          src={image.url}
+          alt={image.alt}
+          width={image.width}
+          height={image.height}
+          loading={full ? 'eager' : 'lazy'}
+          decoding="async"
+          className={loaded ? 'is-loaded' : undefined}
+          onLoad={() => setLoaded(true)}
+          ref={(el) => el?.complete && el.naturalWidth && !loaded && setLoaded(true)}
+        />
+      </div>
+      {image.credit && (
+        <figcaption className="howl-meta post-photo-credit">
+          Photo:{' '}
+          {image.creditUrl ? (
+            <a href={image.creditUrl} target="_blank" rel="noopener noreferrer">
+              {image.credit}
+            </a>
+          ) : (
+            image.credit
+          )}
+        </figcaption>
+      )}
+    </figure>
+  )
+}
+
 // In the feed, tapping a card opens the post's own page. On that page (`full`), the whole text shows.
 // `mine` posts get Delete in the "…" menu; everyone else's get Report.
 function PostCard({ post, mine, full = false, onHowl, onReport, onDelete, onShare }) {
@@ -92,6 +126,7 @@ function PostCard({ post, mine, full = false, onHowl, onReport, onDelete, onShar
             {expanded ? 'Show less' : 'Show more'}
           </button>
         )}
+        {post.image && <PostPhoto image={post.image} full={full} />}
         <div className="howl-post-actions">
           <button
             className={`howl-pill${pop ? ' is-popping' : ''}`}

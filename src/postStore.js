@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
-import { comments as sampleComments, events as sampleEvents, posts as samples } from './posts.js'
+import { comments as sampleComments, events as sampleEvents, photos, posts as samples } from './posts.js'
+import { blobToDataUrl } from './photo.js'
 
 // Everything about loading and saving posts, comments, events and signing in lives in this file.
 // With Supabase keys (the live site), posts and accounts are real.
@@ -19,11 +20,14 @@ const started = Date.now()
 const MINUTE = 60 * 1000
 const postTime = (sample, index = 0) => started - sample.hoursAgo * HOUR - index * 1000
 
+const samplePhoto = (name) => (name ? { url: `/photos/${name}.jpg`, ...photos[name] } : null)
+
 const toPost = (sample, index = 0) => ({
   id: sample.id,
   author: sample.author,
   authorId: null,
   text: sample.text,
+  image: samplePhoto(sample.photo),
   howls: sample.howls,
   comments: sampleComments[sample.id]?.length ?? 0,
   reports: sample.reports ?? 0,
@@ -83,6 +87,16 @@ const fromRow = (row) => ({
   author: row.author,
   authorId: row.author_id,
   text: row.text,
+  image: row.image_url
+    ? {
+        url: row.image_url,
+        alt: row.image_alt,
+        width: row.image_width,
+        height: row.image_height,
+        credit: row.image_credit,
+        creditUrl: row.image_credit_url,
+      }
+    : null,
   howls: row.howls,
   comments: row.comments ?? 0,
   howled: row.howled,
@@ -111,29 +125,66 @@ export async function getPosts() {
   return withMyMarks(newestFirst([...read(MINE_KEY, []), ...sampleList]))
 }
 
-export async function addPost({ user, text }) {
+const PHOTO_BUCKET = 'post-photos'
+
+// Photos go in the post-photos bucket, inside a folder named after the person, so only they can add or remove them.
+async function uploadPhoto(user, photo) {
+  const path = `${user.id}/${Date.now()}.jpg`
+  check(await supabase.storage.from(PHOTO_BUCKET).upload(path, photo.blob, { contentType: 'image/jpeg' }))
+  return supabase.storage.from(PHOTO_BUCKET).getPublicUrl(path).data.publicUrl
+}
+
+// `photo` is optional: { blob, width, height, alt } from preparePhoto, plus the description.
+export async function addPost({ user, text, photo = null }) {
   const clean = text.trim()
   if (clean.length === 0 || clean.length > MAX_LENGTH) throw new Error('Invalid post')
+  const alt = photo?.alt.trim()
+  if (photo && !alt) throw new Error('Photo needs a description')
   if (supabase) {
-    const row = check(await supabase.from('posts').insert({ text: clean }).select('id, created_at').single())
-    return { id: row.id, author: user.name, authorId: user.id, text: clean, howls: 0, comments: 0, howled: false, reports: 0, reported: false, createdAt: row.created_at }
+    const url = photo ? await uploadPhoto(user, photo) : null
+    const image = photo ? { url, alt, width: photo.width, height: photo.height, credit: null, creditUrl: null } : null
+    const row = check(
+      await supabase
+        .from('posts')
+        .insert({
+          text: clean,
+          ...(image && { image_url: url, image_alt: alt, image_width: photo.width, image_height: photo.height }),
+        })
+        .select('id, created_at')
+        .single(),
+    )
+    return { id: row.id, author: user.name, authorId: user.id, text: clean, image, howls: 0, comments: 0, howled: false, reports: 0, reported: false, createdAt: row.created_at }
   }
+  const image = photo
+    ? { url: await blobToDataUrl(photo.blob), alt, width: photo.width, height: photo.height, credit: null, creditUrl: null }
+    : null
   const post = {
     id: `mine-${Date.now()}`,
     author: user.name,
     authorId: user.id,
     text: clean,
+    image,
     howls: 0,
     comments: 0,
     reports: 0,
     createdAt: new Date().toISOString(),
   }
-  write(MINE_KEY, [post, ...read(MINE_KEY, [])])
+  try {
+    write(MINE_KEY, [post, ...read(MINE_KEY, [])])
+  } catch {
+    throw new Error('This browser is out of room for photos')
+  }
   return { ...post, howled: false, reported: false }
 }
 
-export async function deletePost(postId) {
-  if (supabase) return check(await supabase.from('posts').delete().eq('id', postId))
+export async function deletePost(postId, imageUrl = null) {
+  if (supabase) {
+    check(await supabase.from('posts').delete().eq('id', postId))
+    // Remove the photo too, if it's one this person uploaded.
+    const marker = `/object/public/${PHOTO_BUCKET}/`
+    if (imageUrl?.includes(marker)) await supabase.storage.from(PHOTO_BUCKET).remove([imageUrl.split(marker)[1]])
+    return
+  }
   write(MINE_KEY, read(MINE_KEY, []).filter((post) => post.id !== postId))
 }
 

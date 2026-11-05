@@ -133,10 +133,11 @@ function App() {
 
   const remove = async (id) => {
     const before = posts
+    const imageUrl = posts.find((post) => post.id === id)?.image?.url
     setPosts((current) => current.filter((post) => post.id !== id))
     if (page === 'post') navigate('/')
     try {
-      await deletePost(id)
+      await deletePost(id, imageUrl)
       say('Post deleted')
     } catch {
       setPosts(before)
