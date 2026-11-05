@@ -66,6 +66,22 @@ body {
   font-size: var(--text-14);
   line-height: var(--line-height);
   text-decoration: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.nav-link:active {
+  transform: scale(0.96);
+}
+
+.nav-link svg {
+  transition: transform var(--duration-base) var(--ease-spring);
+}
+
+.nav-link:hover svg {
+  transform: translateY(-1px);
 }
 
 .nav-link {
@@ -86,18 +102,20 @@ body {
   font-weight: var(--weight-bold);
 }
 
+.nav-link[aria-current='page'] svg {
+  color: var(--color-accent-text);
+}
+
 .nav-link.is-write {
   border-radius: var(--radius-pill);
   background: var(--color-accent);
   color: var(--color-on-accent);
   font-weight: var(--weight-bold);
-  box-shadow: 0 0 0 2px var(--color-on-accent);
 }
 
 .nav-link.is-write:hover {
-  background: var(--color-text);
-  color: var(--color-background);
-  box-shadow: none;
+  background: var(--color-accent-hover);
+  color: var(--color-on-accent);
 }
 
 .nav-link:focus-visible {
@@ -132,27 +150,9 @@ body {
   line-height: var(--line-height);
 }
 
-.spot-row {
-  display: flex;
-  gap: var(--space-8);
-  margin: 0 0 var(--space-16);
-  padding-bottom: var(--space-8);
-  overflow-x: auto;
-}
-
-.spot-row .howl-tag {
-  flex: none;
-}
-
 .side-title {
   margin: 0 0 var(--space-12);
   font-size: var(--text-18);
-}
-
-.side .tag-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-8);
 }
 
 /* Tablet: icon rail on the left, feed in the middle */
@@ -238,10 +238,6 @@ body {
     display: block;
   }
 
-  .spot-row {
-    display: none;
-  }
-
   .side {
     position: sticky;
     top: 0;
@@ -270,6 +266,15 @@ body {
 
 .compose::backdrop {
   background: color-mix(in srgb, var(--color-background) 80%, transparent);
+  backdrop-filter: blur(4px);
+}
+
+.compose[open] {
+  animation: howl-sheet-in var(--duration-base) var(--ease-out);
+}
+
+.compose[open]::backdrop {
+  animation: howl-fade-in var(--duration-base) var(--ease-out);
 }
 
 .compose .howl-composer {
@@ -309,6 +314,7 @@ body {
 
 /* Wordmark doubles as a link back to the full feed */
 .brand-link {
+  text-decoration: none;
   padding: 0;
   border: 0;
   background: none;
@@ -332,7 +338,12 @@ body {
   color: var(--color-text);
 }
 
-/* Spots, Alerts and Profile pages */
+/* Each page fades in when you switch to it */
+.page {
+  animation: howl-fade-in var(--duration-base) var(--ease-out);
+}
+
+/* Events, Alerts and Profile pages */
 .page-title {
   margin: 0 0 var(--space-8);
   font-size: var(--text-24);
@@ -348,7 +359,6 @@ body {
   font-size: var(--text-18);
 }
 
-.spot-list,
 .alert-list {
   margin: 0;
   padding: 0;
@@ -356,38 +366,18 @@ body {
   border-top: 1px solid var(--color-border);
 }
 
-.spot-link {
-  width: 100%;
-  min-height: calc(var(--tap-target) + var(--space-12));
-  display: flex;
-  align-items: center;
-  gap: var(--space-12);
-  padding: 0 var(--space-4);
-  border: 0;
-  border-bottom: 1px solid var(--color-border);
-  background: none;
-  text-align: left;
-}
-
-.spot-link svg {
-  flex: none;
-  color: var(--color-text-muted);
-}
-
-.spot-link:hover {
-  background: var(--color-surface);
-}
-
-.spot-name {
-  flex: 1;
-  font-weight: var(--weight-bold);
-}
-
 .alert-item {
   display: flex;
   gap: var(--space-12);
   padding: var(--space-12) var(--space-4);
   border-bottom: 1px solid var(--color-border);
+  color: inherit;
+  text-decoration: none;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.alert-item:hover {
+  background: var(--color-surface);
 }
 
 .alert-item svg {
@@ -462,6 +452,8 @@ body {
 }
 
 .post-menu-list {
+  transform-origin: top right;
+  animation: howl-menu-in var(--duration-fast) var(--ease-out);
   position: absolute;
   right: 0;
   top: calc(100% + var(--space-4));
@@ -532,4 +524,158 @@ body {
 .field-error {
   color: var(--color-error);
   font-size: var(--text-14);
+}
+
+/* Feed cards open their post */
+.howl-post.is-linked {
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
+}
+
+.howl-post.is-linked:hover {
+  box-shadow: inset 0 0 0 1px var(--color-border-strong);
+}
+
+.post-time {
+  text-decoration: none;
+}
+
+.post-time:hover {
+  color: var(--color-text);
+  text-decoration: underline;
+  text-underline-offset: var(--space-4);
+}
+
+.howl-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 0 var(--space-8);
+}
+
+.howl-post-text.is-full {
+  font-size: var(--text-24);
+  line-height: 1.4;
+}
+
+/* Post page */
+.back-link {
+  min-height: var(--tap-target);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin: 0 0 var(--space-8);
+  padding-right: var(--space-12);
+  color: var(--color-text-muted);
+  font-weight: var(--weight-bold);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.back-link svg {
+  transition: transform var(--duration-base) var(--ease-spring);
+}
+
+.back-link:hover {
+  color: var(--color-text);
+}
+
+.back-link:hover svg {
+  transform: translateX(calc(var(--space-4) * -1));
+}
+
+.comment-form {
+  display: grid;
+  grid-template-columns: var(--space-32) minmax(0, 1fr);
+  gap: var(--space-12);
+  padding-bottom: var(--space-16);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.comment-field {
+  min-height: calc(var(--space-64) + var(--space-16));
+}
+
+.comment-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.comment-list .howl-comment + .howl-comment {
+  border-top: 1px solid var(--color-border);
+}
+
+.howl-comment.is-fresh {
+  animation-name: howl-comment-in;
+}
+
+@keyframes howl-comment-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-8));
+    background: var(--color-surface);
+  }
+}
+
+/* Events */
+.event-list {
+  display: grid;
+  gap: var(--space-12);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.going-button.is-going {
+  animation: howl-pop var(--duration-base) var(--ease-spring);
+}
+
+.coming-up {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.coming-up-link {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-12);
+  margin: 0 calc(var(--space-12) * -1);
+  border-radius: var(--radius-soft);
+  color: inherit;
+  text-decoration: none;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.coming-up-link:hover {
+  background: var(--color-surface);
+}
+
+.coming-up-when {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.coming-up-when svg {
+  width: var(--space-16);
+  height: var(--space-16);
+  color: var(--color-accent-text);
+}
+
+.side-more {
+  display: inline-flex;
+  align-items: center;
+}
+
+.howl-surface a:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-soft);
 }

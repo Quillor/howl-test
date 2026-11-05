@@ -1,17 +1,20 @@
 import { useEffect, useRef, useState } from 'react'
 import Icon from './Icon.jsx'
+import { Link, navigate } from './router.jsx'
 import { isFresh, timeAgo } from './timeAgo.js'
 
 const isLong = (text) => text.length > 160
 
+// In the feed, tapping a card opens the post's own page. On that page (`full`), the whole text shows.
 // `mine` posts get Delete in the "…" menu; everyone else's get Report.
-function PostCard({ post, mine, onHowl, onReport, onDelete }) {
+function PostCard({ post, mine, full = false, onHowl, onReport, onDelete, onShare }) {
   const [expanded, setExpanded] = useState(false)
   const [pop, setPop] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [asking, setAsking] = useState(null)
   const menu = useRef(null)
-  const long = isLong(post.text)
+  const long = !full && isLong(post.text)
+  const href = `/post/${post.id}`
 
   useEffect(() => {
     if (!menuOpen) return
@@ -31,8 +34,15 @@ function PostCard({ post, mine, onHowl, onReport, onDelete }) {
     setAsking(action)
   }
 
+  // Clicking empty parts of a feed card opens the post. Buttons, links and selected text keep working.
+  const openPost = (event) => {
+    if (full || event.target.closest('button, a, [role="menu"], .howl-notice')) return
+    if (window.getSelection()?.toString()) return
+    navigate(href)
+  }
+
   return (
-    <article className="howl-post is-card">
+    <article className={`howl-post is-card${full ? ' is-full' : ' is-linked'}`} onClick={openPost}>
       <div className="howl-avatar" aria-hidden="true">
         {post.author[0].toUpperCase()}
       </div>
@@ -40,10 +50,13 @@ function PostCard({ post, mine, onHowl, onReport, onDelete }) {
         <div className="howl-post-who">
           <strong>{post.author}</strong>
           {mine && <span className="howl-meta">You</span>}
-          {post.location && <span className="howl-meta">{post.location}</span>}
-          <span className={`howl-meta${isFresh(post.createdAt) ? ' is-fresh' : ''}`}>
-            {timeAgo(post.createdAt)}
-          </span>
+          {full ? (
+            <span className={`howl-meta${isFresh(post.createdAt) ? ' is-fresh' : ''}`}>{timeAgo(post.createdAt)}</span>
+          ) : (
+            <Link to={href} className={`howl-meta post-time${isFresh(post.createdAt) ? ' is-fresh' : ''}`}>
+              {timeAgo(post.createdAt)}
+            </Link>
+          )}
           {!(post.reported && !mine) && (
             <div className="post-menu" ref={menu}>
               <button
@@ -73,7 +86,7 @@ function PostCard({ post, mine, onHowl, onReport, onDelete }) {
             </div>
           )}
         </div>
-        <p className={`howl-post-text${long && !expanded ? ' is-clamped' : ''}`}>{post.text}</p>
+        <p className={`howl-post-text${full ? ' is-full' : ''}${long && !expanded ? ' is-clamped' : ''}`}>{post.text}</p>
         {long && (
           <button className="howl-more" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
             {expanded ? 'Show less' : 'Show more'}
@@ -86,16 +99,32 @@ function PostCard({ post, mine, onHowl, onReport, onDelete }) {
             onClick={() => {
               if (onHowl(post.id)) setPop(!post.howled)
             }}
-            onAnimationEnd={() => setPop(false)}
+            onAnimationEnd={(event) => event.target === event.currentTarget && setPop(false)}
           >
             <Icon name="howl" />
             {post.howled ? 'Howled' : 'Howl'}
-            <span className="howl-count">{post.howls}</span>
+            <span key={post.howls} className="howl-count is-changing">
+              {post.howls}
+            </span>
           </button>
-          <button className="howl-icon-button" aria-label="Reply">
-            <Icon name="reply" />
-          </button>
-          <button className="howl-icon-button" aria-label="Share">
+          {full ? (
+            <span className="howl-stat howl-meta">
+              <Icon name="reply" />
+              {post.comments === 1 ? '1 comment' : `${post.comments} comments`}
+            </span>
+          ) : (
+            <Link
+              to={href}
+              className="howl-icon-button has-count"
+              aria-label={post.comments === 1 ? '1 comment. Open post' : `${post.comments} comments. Open post`}
+            >
+              <Icon name="reply" />
+              <span key={post.comments} className="howl-count is-changing" aria-hidden="true">
+                {post.comments}
+              </span>
+            </Link>
+          )}
+          <button className="howl-icon-button" aria-label="Share post" onClick={() => onShare(post)}>
             <Icon name="share" />
           </button>
           {post.reported && <span className="howl-meta">Reported</span>}

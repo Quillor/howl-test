@@ -1,25 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
 import Icon from './Icon.jsx'
-import { MAX_LENGTH, addPost, campusSpots } from './postStore.js'
+import { MAX_LENGTH, addPost } from './postStore.js'
 
 const COUNTER_FROM = 40
 
-function Composer({ open, user, initialSpot, onClose, onPosted }) {
+function Composer({ open, user, onClose, onPosted }) {
   const dialog = useRef(null)
   const [text, setText] = useState('')
-  const [spot, setSpot] = useState('')
   const [tried, setTried] = useState(false)
   const [saving, setSaving] = useState(false)
   const [failed, setFailed] = useState(false)
 
   useEffect(() => {
     const el = dialog.current
-    if (open && !el.open) {
-      setSpot(initialSpot ?? '')
-      el.showModal()
-    }
+    if (open && !el.open) el.showModal()
     if (!open && el.open) el.close()
-  }, [open, initialSpot])
+  }, [open])
 
   const left = MAX_LENGTH - text.length
   const empty = text.trim().length === 0
@@ -40,7 +36,7 @@ function Composer({ open, user, initialSpot, onClose, onPosted }) {
     setFailed(false)
     let post
     try {
-      post = await addPost({ user, text, location: spot })
+      post = await addPost({ user, text })
     } catch {
       setFailed(true)
       setSaving(false)
@@ -48,7 +44,6 @@ function Composer({ open, user, initialSpot, onClose, onPosted }) {
     }
     setSaving(false)
     setText('')
-    setSpot('')
     setTried(false)
     onPosted(post)
   }
@@ -74,17 +69,6 @@ function Composer({ open, user, initialSpot, onClose, onPosted }) {
             value={text}
             onChange={(event) => setText(event.target.value)}
           />
-          <select
-            className="howl-select"
-            aria-label="Campus spot"
-            value={spot}
-            onChange={(event) => setSpot(event.target.value)}
-          >
-            <option value="">Add a spot (optional)</option>
-            {campusSpots.map((name) => (
-              <option key={name}>{name}</option>
-            ))}
-          </select>
           {message && (
             <div className="howl-notice is-error compose-message" role="alert">
               <Icon name="error" />

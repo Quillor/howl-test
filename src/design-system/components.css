@@ -1,5 +1,15 @@
 /* Howl base components. Only named tokens from tokens.css, no raw colors or sizes. */
 
+/* Motion: quick, soft and quiet. One easing curve for everything, so it feels like one product. */
+:root {
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 160ms;
+  --duration-base: 280ms;
+  --duration-slow: 520ms;
+  --stagger: 45ms;
+}
+
 .howl-surface {
   background: var(--color-background);
   color: var(--color-text);
@@ -8,8 +18,8 @@
   line-height: var(--line-height);
 }
 
-.howl-surface button,
-.howl-surface textarea {
+/* :where keeps this weaker than component classes, so .howl-button's white text wins */
+.howl-surface :where(button, textarea) {
   font: inherit;
   color: inherit;
 }
@@ -67,7 +77,7 @@
   border-bottom-color: var(--color-text);
 }
 
-/* Buttons: main (amber), secondary (outline). Secondary can be a toggle. */
+/* Buttons: main (red), secondary (outline). Secondary can be a toggle. */
 .howl-button {
   min-height: var(--tap-target);
   padding: 0 var(--space-24);
@@ -80,16 +90,20 @@
   background: var(--color-accent);
   color: var(--color-on-accent);
   font-weight: var(--weight-bold);
+  text-decoration: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
 }
 
 .howl-button:is(:hover, .is-hover):not(:disabled) {
-  background: var(--color-text);
-  color: var(--color-background);
+  background: var(--color-accent-hover);
 }
 
 .howl-button:is(:active, .is-pressed):not(:disabled) {
-  background: var(--color-text);
-  color: var(--color-background);
+  background: var(--color-accent-hover);
   transform: scale(0.96);
 }
 
@@ -140,6 +154,12 @@
   background: none;
   color: var(--color-text-muted);
   font-weight: var(--weight-bold);
+  text-decoration: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
 }
 
 .howl-pill:is(:hover, .is-hover) {
@@ -169,12 +189,6 @@
   transform: none;
 }
 
-/* An edge keeps amber visible on white (3:1); invisible on black */
-.howl-button:not(.is-secondary):not(:disabled),
-.howl-pill[aria-pressed='true'] {
-  box-shadow: 0 0 0 2px var(--color-on-accent);
-}
-
 /* Reply and share */
 .howl-icon-button {
   width: var(--tap-target);
@@ -185,6 +199,10 @@
   border-radius: 50%;
   background: none;
   color: var(--color-text-muted);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
 }
 
 .howl-icon-button:is(:hover, .is-hover) {
@@ -201,6 +219,19 @@
   color: var(--color-text-muted);
   cursor: not-allowed;
   transform: none;
+}
+
+/* With a number next to the icon, like the comment count */
+.howl-icon-button.has-count {
+  width: auto;
+  min-width: var(--tap-target);
+  padding: 0 var(--space-12) 0 var(--space-8);
+  display: inline-flex;
+  gap: var(--space-4);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-14);
+  font-weight: var(--weight-bold);
+  text-decoration: none;
 }
 
 /* Write a post box */
@@ -363,6 +394,10 @@
   background: none;
   color: var(--color-text-muted);
   font-size: var(--text-14);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
 }
 
 .howl-tag:is(:hover, .is-hover):not(:disabled) {
@@ -393,7 +428,7 @@
 /* Post card: no box, a divider underneath */
 .howl-post {
   display: grid;
-  grid-template-columns: var(--space-32) 1fr;
+  grid-template-columns: var(--space-32) minmax(0, 1fr);
   gap: var(--space-12);
   padding: var(--space-16);
   border-bottom: 1px solid var(--color-border);
@@ -478,6 +513,7 @@
 
 .howl-post-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--space-8);
   margin-top: var(--space-8);
@@ -513,17 +549,186 @@
 }
 
 @keyframes howl-pop {
-  50% {
-    transform: scale(1.12);
+  40% {
+    transform: scale(1.14);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes howl-glow {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-accent) 55%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 12px color-mix(in srgb, var(--color-accent) 0%, transparent);
+  }
+}
+
+@keyframes howl-moon {
+  0% {
+    transform: rotate(0) scale(1);
+  }
+  45% {
+    transform: rotate(-24deg) scale(1.25);
+  }
+  100% {
+    transform: rotate(0) scale(1);
   }
 }
 
 .howl-pill.is-popping {
-  animation: howl-pop 200ms ease-out;
+  animation:
+    howl-pop var(--duration-base) var(--ease-spring),
+    howl-glow var(--duration-slow) var(--ease-out);
+}
+
+.howl-pill.is-popping svg {
+  animation: howl-moon var(--duration-slow) var(--ease-spring);
+}
+
+/* Numbers roll up when they change */
+@keyframes howl-count {
+  from {
+    opacity: 0;
+    transform: translateY(40%);
+  }
+}
+
+.howl-count.is-changing {
+  display: inline-block;
+  animation: howl-count var(--duration-base) var(--ease-out);
+}
+
+/* Cascading fade-in: each item waits a little longer than the one before (set --i on it) */
+@keyframes howl-rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-12));
+  }
+}
+
+.howl-rise {
+  animation: howl-rise var(--duration-slow) var(--ease-out) both;
+  animation-delay: calc(min(var(--i, 0), 10) * var(--stagger));
+}
+
+/* Sheets and menus open from where they come from */
+@keyframes howl-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-16)) scale(0.98);
+  }
+}
+
+@keyframes howl-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes howl-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--space-4) * -1)) scale(0.96);
+  }
+}
+
+/* Event card: date on the left, details and a Going button */
+.howl-event {
+  display: grid;
+  grid-template-columns: var(--space-64) minmax(0, 1fr);
+  gap: var(--space-16);
+  padding: var(--space-16);
+  border-radius: var(--radius-soft);
+  background: var(--color-surface);
+}
+
+.howl-event-date {
+  align-self: start;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  padding: var(--space-8) 0;
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-soft);
+  line-height: 1.2;
+}
+
+.howl-event-date .month {
+  color: var(--color-accent-text);
+  font-size: var(--text-14);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+}
+
+.howl-event-date .day {
+  font-size: var(--text-24);
+  font-weight: var(--weight-bold);
+}
+
+.howl-event-title {
+  margin: 0;
+  font-size: var(--text-18);
+  line-height: 1.3;
+}
+
+.howl-event p {
+  margin: var(--space-4) 0 0;
+}
+
+.howl-event .howl-post-actions {
+  flex-wrap: wrap;
+}
+
+.howl-event.is-past {
+  background: none;
+  border: 1px solid var(--color-border);
+}
+
+/* Comment: smaller than a post, a thread line on the left */
+.howl-comment {
+  display: grid;
+  grid-template-columns: var(--space-32) minmax(0, 1fr);
+  gap: var(--space-12);
+  padding: var(--space-12) 0;
+}
+
+.howl-comment p {
+  margin: var(--space-4) 0 0;
+  overflow-wrap: anywhere;
+}
+
+/* Toast: a short message at the bottom, like "Link copied" */
+.howl-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--space-64) + var(--space-32));
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-pill);
+  background: var(--color-text);
+  color: var(--color-background);
+  font-weight: var(--weight-bold);
+  transform: translateX(-50%);
+  animation: howl-toast var(--duration-base) var(--ease-spring);
+}
+
+@keyframes howl-toast {
+  from {
+    opacity: 0;
+    transform: translate(-50%, var(--space-16)) scale(0.96);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .howl-surface * {
+  .howl-surface *,
+  .howl-surface,
+  .howl-toast {
     animation: none !important;
     transition: none !important;
   }

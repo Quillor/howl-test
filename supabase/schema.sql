@@ -1,5 +1,6 @@
 -- Howl database. Paste into Supabase: SQL Editor > New query > Run.
--- Anyone can read posts. Signed-in people can post, howl, report and delete their own posts.
+-- Anyone can read posts, comments and events. Signed-in people can post, howl, comment, report,
+-- say they're going to events and delete their own posts.
 -- Nobody can edit posts, and posts are 1 to 280 characters.
 
 create table public.profiles (
@@ -30,6 +31,31 @@ create table public.reports (
   primary key (post_id, user_id)
 );
 
+create table public.comments (
+  id bigint generated always as identity primary key,
+  post_id bigint not null references public.posts on delete cascade,
+  author_id uuid references public.profiles on delete cascade default auth.uid(),
+  author_name text,
+  text text not null check (char_length(btrim(text)) between 1 and 280),
+  created_at timestamptz not null default now()
+);
+
+-- Campus events. Only the Howl team adds events (in Supabase), so the app can't insert them.
+create table public.events (
+  id bigint generated always as identity primary key,
+  title text not null,
+  place text not null,
+  details text,
+  starts_at timestamptz not null,
+  sample_going int not null default 0
+);
+
+create table public.event_rsvps (
+  event_id bigint references public.events on delete cascade,
+  user_id uuid references auth.users on delete cascade default auth.uid(),
+  primary key (event_id, user_id)
+);
+
 -- New account: save the name they typed when asking for the sign-in link.
 create function public.make_profile() returns trigger
 language plpgsql security definer set search_path = '' as $$
@@ -54,15 +80,33 @@ select
   p.created_at,
   p.sample_howls + (select count(*) from public.howls h where h.post_id = p.id)::int as howls,
   exists (select 1 from public.howls h where h.post_id = p.id and h.user_id = auth.uid()) as howled,
-  exists (select 1 from public.reports r where r.post_id = p.id and r.user_id = auth.uid()) as reported
+  exists (select 1 from public.reports r where r.post_id = p.id and r.user_id = auth.uid()) as reported,
+  (select count(*) from public.comments c where c.post_id = p.id)::int as comments
 from public.posts p
 left join public.profiles pr on pr.id = p.author_id
 where (select count(*) from public.reports r where r.post_id = p.id) < 3;
+
+-- Comments with the commenter's name.
+create view public.comment_list with (security_invoker = true) as
+select c.id, c.post_id, coalesce(pr.name, c.author_name) as author, c.author_id, c.text, c.created_at
+from public.comments c
+left join public.profiles pr on pr.id = c.author_id;
+
+-- Events with how many people are going and whether you are. Runs as its owner to count everyone.
+create view public.event_list as
+select
+  e.id, e.title, e.place, e.details, e.starts_at,
+  e.sample_going + (select count(*) from public.event_rsvps r where r.event_id = e.id)::int as going_count,
+  exists (select 1 from public.event_rsvps r where r.event_id = e.id and r.user_id = auth.uid()) as going
+from public.events e;
 
 alter table public.profiles enable row level security;
 alter table public.posts enable row level security;
 alter table public.howls enable row level security;
 alter table public.reports enable row level security;
+alter table public.comments enable row level security;
+alter table public.events enable row level security;
+alter table public.event_rsvps enable row level security;
 
 create policy "Anyone can see names" on public.profiles for select using (true);
 create policy "People rename themselves" on public.profiles for update using (id = auth.uid());
@@ -80,7 +124,21 @@ create policy "People take back their howl" on public.howls for delete to authen
 create policy "People see their own reports" on public.reports for select to authenticated using (user_id = auth.uid());
 create policy "Signed-in people report" on public.reports for insert to authenticated with check (user_id = auth.uid());
 
+create policy "Anyone can read comments" on public.comments for select using (true);
+create policy "Signed-in people comment as themselves" on public.comments for insert to authenticated
+  with check (author_id = auth.uid() and author_name is null);
+create policy "People delete their own comments" on public.comments for delete to authenticated
+  using (author_id = auth.uid());
+
+create policy "Anyone can see events" on public.events for select using (true);
+
+create policy "People see their own RSVPs" on public.event_rsvps for select to authenticated using (user_id = auth.uid());
+create policy "Signed-in people say they're going" on public.event_rsvps for insert to authenticated with check (user_id = auth.uid());
+create policy "People change their mind" on public.event_rsvps for delete to authenticated using (user_id = auth.uid());
+
 grant select on public.feed to anon, authenticated;
+grant select on public.comment_list to anon, authenticated;
+grant select on public.event_list to anon, authenticated;
 
 -- Sample posts, so the live site isn't empty on day one.
 insert into public.posts (author_id, author_name, location, text, sample_howls, created_at) values
