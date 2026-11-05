@@ -1021,7 +1021,7 @@ photos: {
 - In the feed and on the post page, photos keep their shape while loading so nothing jumps, and fade in gently once they're ready.
 - Add real photos to some of the sample posts, from these campus places:
 {{places:list}}
-  Only use photos with an open license, like the ones on Wikimedia Commons, and save them in the project. Show a small credit under each one with the photographer's name and the license, linked to where it came from. List them all in a credits file.
+  Only use photos with an open license, like the ones on Wikimedia Commons, and save them in the project. Pick scenic ones with warm, golden-hour light where you can, so the feed feels like a campus at sunset.
 - If Supabase needs settings changed, guide me in the browser one step at a time and wait for "done".
 
 When you're done, tell me how to check it in 3 simple steps, then save a version.` },
@@ -1077,7 +1077,7 @@ const STEPS = [
       <p>These came from my own test runs of this lesson. Open them on your phone.</p>
       <div class="link-cards">
         <a class="link-card" href="https://howl-test-git-workshop-tim-rosenberg.vercel.app" target="_blank" rel="noopener"><span class="when">End of class</span><strong>Howl, live</strong><small>Your own design system in NC State red, a home screen for phone and laptop, posting, howling, comments and campus events.</small><span class="go">Open it</span></a>
-        <a class="link-card" href="https://howl-test.vercel.app" target="_blank" rel="noopener"><span class="when">After the take-home steps</span><strong>The full app</strong><small>A real database everyone shares, sign-in by email link, your own posts, reporting, photos of real campus spots, comments and events for everyone, plus Alerts and Profile.</small><span class="go">Open it</span></a>
+        <a class="link-card" href="https://howl-test.vercel.app" target="_blank" rel="noopener"><span class="when">After the take-home steps</span><strong>The full app</strong><small>A real database everyone shares, sign-in by email link, your own posts, reporting, golden-hour photos of real campus spots, comments and events for everyone, plus Alerts and Profile.</small><span class="go">Open it</span></a>
         <a class="link-card" href="https://howl-test.vercel.app/design-system" target="_blank" rel="noopener"><span class="when">Along the way</span><strong>The design system</strong><small>Colors, type, spacing and every building block, in light and dark. It lives at its own hidden link.</small><span class="go">Open it</span></a>
       </div>
       <div class="callout"><span class="label">Yours will look different</span>These are from my test run. Your Howl will have its own look, because you\'ll pick it.</div>` },
@@ -1215,8 +1215,7 @@ const STEPS = [
   { id: 'accounts', group: '5 · Keep building (after launch)', label: 'Let people sign in', title: 'Let people sign in', prompt: 'accounts',
     lead: 'Accounts make Howl a real social app: every post belongs to someone, and people can delete their own posts.' },
   { id: 'photos', group: '5 · Keep building (after launch)', label: 'Add photos to posts', title: 'Add photos to posts', prompt: 'photos',
-    lead: 'Campus life is visual. Let people add a photo to a post, with a description for anyone who can\'t see it. Sample posts get real photos of NC State, from photographers who share their work openly.',
-    after: '<div class="callout idea"><span class="label">Why credits matter</span>Open-license photos are free to use as long as you credit the photographer. It\'s the same respect you\'d want for your own work, and it keeps your portfolio piece clean.</div>' },
+    lead: 'Campus life is visual. Let people add a photo to a post, with a description for anyone who can\'t see it. Sample posts get real, scenic photos of NC State.' },
   { id: 'finish', group: '5 · Keep building (after launch)', label: 'Get it ready for real students', title: 'Get it ready for real students', prompt: 'finish',
     lead: 'The last mile of an MVP: a way to report bad posts, a full quality check on every screen, and a link that looks good when it\'s shared.' },
   { id: 'casestudy', group: '5 · Keep building (after launch)', label: 'Write your case study', title: 'Write your case study', prompt: 'casestudy',
